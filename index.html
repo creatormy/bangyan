@@ -1749,12 +1749,12 @@
                 const displayDt = dt.toLocaleString('ms-MY', { dateStyle: 'short', timeStyle: 'short' });
                 
                 html += `
-                    <div class="bg-tactical-dark p-3 rounded border border-tactical-border flex justify-between items-center hover:bg-tactical-panel transition">
-                        <div>
-                            <strong class="text-white block text-sm">${ann.title}</strong>
-                            <span class="text-xs text-tactical-text font-mono">${displayDt} | Oleh: <span class="text-tactical-green">${ann.author}</span></span>
+                    <div class="bg-tactical-dark p-3 rounded border border-tactical-border flex flex-col sm:flex-row justify-between items-start sm:items-center hover:bg-tactical-panel transition gap-3 w-full box-border overflow-hidden">
+                        <div class="min-w-0 flex-grow w-full">
+                            <strong class="text-white block text-sm break-words whitespace-normal">${ann.title}</strong>
+                            <span class="text-xs text-tactical-text font-mono block mt-1 break-words whitespace-normal">${displayDt} | Oleh: <span class="text-tactical-green">${ann.author}</span></span>
                         </div>
-                        <button type="button" onclick="deleteAnnouncement('${ann.id}')" class="bg-red-800 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition"><i class="fa-solid fa-trash"></i></button>
+                        <button type="button" onclick="deleteAnnouncement('${ann.id}')" class="bg-red-800 hover:bg-red-600 text-white px-3 py-2 rounded text-xs transition shrink-0 w-full sm:w-auto"><i class="fa-solid fa-trash"></i> PADAM</button>
                     </div>
                 `;
             });
