@@ -1004,7 +1004,7 @@
             }
         }
 
-        window.toggleAuthMode = function() {
+        window.toggleAuthMode = function(keepAlert = false) {
             isLoginMode = !isLoginMode;
             document.getElementById('auth-title').textContent = isLoginMode ? 'PENGESAHAN IDENTITI' : 'PENDAFTARAN REKRUT';
             document.getElementById('auth-subtitle').textContent = isLoginMode ? 'Sila log masuk untuk mengakses sistem' : 'Daftar butiran untuk kelulusan pentadbir';
@@ -1028,7 +1028,11 @@
                 labelEmail.textContent = 'ALAMAT EMEL / ID';
                 document.getElementById('auth-switch-text').innerHTML = 'Sudah mempunyai akses? <a onclick="toggleAuthMode()" class="cursor-pointer text-tactical-green hover:underline font-bold">Log Masuk Sini</a>';
             }
-            window.hideAlert();
+            
+            // Jangan sembunyikan alert jika diarahkan untuk mengekalkannya
+            if (keepAlert !== true) {
+                window.hideAlert();
+            }
         }
 
         window.handleAuth = async function(e) {
@@ -1088,8 +1092,9 @@
                         role: 'user', 
                         createdAt: Date.now()
                     });
-                    window.showAlert('Pendaftaran menunggu pengesahan admin, sila tunggu sehingga di approve.', 'success');
-                    window.toggleAuthMode();
+                    
+                    window.showAlert('Pendaftaran berjaya! Sila tunggu pengesahan Command Center sebelum log masuk.', 'success');
+                    window.toggleAuthMode(true); // Tukar skrin tapi kekalkan notifikasi
                     document.getElementById('auth-form').reset();
                 }
             } catch (error) {
@@ -1772,11 +1777,11 @@
                 alertBox.classList.remove('translate-x-full');
             }, 10);
 
-            // Sembunyi secara automatik
+            // Sembunyi secara automatik (Masa dipanjangkan ke 8 saat)
             if (window.alertTimeout) clearTimeout(window.alertTimeout);
             window.alertTimeout = setTimeout(() => {
                 window.hideAlert();
-            }, 5000);
+            }, 8000);
         }
 
         window.hideAlert = function() { 
