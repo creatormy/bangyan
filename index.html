@@ -693,6 +693,23 @@
             }
         };
 
+        window.openImageViewer = function(url, name) {
+            const modal = document.getElementById('image-viewer-modal');
+            const img = document.getElementById('viewer-image');
+            const btn = document.getElementById('viewer-download-btn');
+            if(modal && img && btn) {
+                img.src = url;
+                btn.href = url;
+                btn.download = `SRTEAM_Profile_${name}.jpg`;
+                modal.classList.remove('hidden');
+            }
+        };
+
+        window.closeImageViewer = function() {
+            const modal = document.getElementById('image-viewer-modal');
+            if(modal) modal.classList.add('hidden');
+        };
+
         function getVerifiedBadge(user) {
             if (!user) return '';
             const isVerified = (user.role === 'superadmin' || user.role === 'admin' || user.role === 'komander' || user.role === 'moderator' || user.verified);
@@ -2247,6 +2264,15 @@
             unreads.forEach(async (n) => {
                 try {
                     await updateDoc(doc(db, 'artifacts', appId, 'users', currentUser.id, 'notifications', n.id), { read: true });
+                } catch(e) {}
+            });
+        }
+
+        window.clearAllNotifications = async function() {
+            if(!confirm('Anda pasti mahu memadam semua rekod notifikasi?')) return;
+            notifications.forEach(async (n) => {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.id, 'notifications', n.id));
                 } catch(e) {}
             });
         }
