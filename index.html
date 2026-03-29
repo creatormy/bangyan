@@ -1,1 +1,1644 @@
-hay
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRTEAM ESPORT | Delta Force Tactical</title>
+    <!-- Tailwind CSS untuk Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome untuk Ikon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        tactical: {
+                            dark: '#0a0a0a',
+                            panel: '#151515',
+                            border: '#2a3b2c',
+                            green: '#4ade80',
+                            greenDark: '#166534',
+                            text: '#a3a3a3',
+                            alert: '#ef4444'
+                        }
+                    },
+                    fontFamily: {
+                        'tactical': ['Rajdhani', 'sans-serif'],
+                        'mono': ['Share Tech Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #050505;
+            background-image: 
+                linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)),
+                url('data:image/svg+xml;utf8,<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg"><path d="M0 0h40v40H0z" fill="none"/><path d="M0 39h40v1H0zM39 0h1v40h-1z" fill="rgba(74, 222, 128, 0.05)"/></svg>');
+            color: #d4d4d4;
+        }
+        
+        .scanline {
+            width: 100%;
+            height: 100px;
+            z-index: 9999;
+            position: absolute;
+            pointer-events: none;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(74,222,128,0.1) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
+            animation: scan 6s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: -100px; }
+            100% { top: 100%; }
+        }
+
+        .btn-tactical {
+            background: linear-gradient(45deg, #166534, #14532d);
+            border: 1px solid #4ade80;
+            color: white;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+        }
+
+        .btn-tactical:hover {
+            background: linear-gradient(45deg, #4ade80, #166534);
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+            color: #000;
+        }
+
+        .input-tactical {
+            background-color: rgba(20, 20, 20, 0.8);
+            border: 1px solid #2a3b2c;
+            color: #4ade80;
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        .input-tactical:focus {
+            outline: none;
+            border-color: #4ade80;
+            box-shadow: 0 0 5px rgba(74, 222, 128, 0.3);
+        }
+
+        .panel-tactical {
+            background: rgba(21, 21, 21, 0.9);
+            border: 1px solid #2a3b2c;
+            border-left: 4px solid #166534;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+
+        .glitch-text {
+            text-shadow: 2px 0 #166534, -2px 0 #4ade80;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a3b2c; 
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4ade80; 
+        }
+    </style>
+</head>
+<body class="font-tactical flex flex-col min-h-screen relative overflow-x-hidden">
+    <div class="scanline"></div>
+
+    <!-- Pengepala / Navbar & Headbar Digabungkan (Sebaris Kiri-Kanan) -->
+    <header class="bg-tactical-dark border-b border-tactical-border sticky top-0 z-50 shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
+        <!-- Memaksa baris lurus (flex-row) dan memisahkan logo di kiri, menu di kanan (justify-between) -->
+        <div class="w-full px-2 lg:px-4 py-2 lg:py-3 flex flex-row items-center justify-between gap-2">
+            
+            <!-- Bahagian Logo (Hujung Kiri) -->
+            <div class="flex items-center cursor-pointer flex-shrink-0" onclick="navigateTo('home')" title="Halaman Utama">
+                <img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" alt="Logo SRTEAM" class="h-10 lg:h-12 w-auto drop-shadow-[0_0_10px_rgba(74,222,128,0.6)] hover:scale-105 transition-transform duration-300">
+            </div>
+
+            <!-- Bahagian Menu (Hujung Kanan, Sebaris, Boleh digeser jika layar kecil) -->
+            <nav class="flex flex-row flex-nowrap items-center justify-end gap-3 lg:gap-6 overflow-x-auto no-scrollbar" id="main-nav">
+                <!-- Akan diisi oleh JavaScript -->
+            </nav>
+            
+        </div>
+    </header>
+
+    <!-- Kandungan Utama -->
+    <main class="flex-grow container mx-auto px-4 py-8 relative z-10">
+        
+        <!-- Notifikasi -->
+        <div id="alert-box" class="hidden mb-6 p-4 border-l-4 font-mono text-sm" role="alert">
+            <p id="alert-message"></p>
+        </div>
+
+        <!-- 1. HALAMAN UTAMA (Home) -->
+        <section id="view-home" class="view-section">
+            <div class="text-center mb-12">
+                <h2 class="text-5xl md:text-7xl font-bold text-white mb-4 uppercase tracking-tighter">Selamat <span class="text-tactical-green glitch-text">Datang</span></h2>
+                <p class="text-tactical-text text-lg max-w-2xl mx-auto font-mono">Portal Rasmi Komuniti E-Sukan SRTEAM. Platform pengurusan eksklusif untuk ahli berdaftar. Bersama kita memupuk semangat kompetitif, profesionalisme, dan kerjasama berpasukan ke tahap yang tertinggi.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="panel-tactical p-6 rounded">
+                    <h3 class="text-2xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-bullhorn text-tactical-green mr-2"></i> Pengumuman Pasukan</h3>
+                    <p class="text-tactical-text font-mono text-sm leading-relaxed">
+                        Pendaftaran keahlian SRTEAM kini dibuka secara rasmi. Kami sentiasa mengalu-alukan pemain yang komited, berdisiplin, dan berdedikasi untuk berkembang bersama kami dalam arena e-sukan tempatan dan antarabangsa.<br><br>
+                        Sila daftar akaun anda sekarang untuk mendapatkan akses penuh ke sistem pengurusan klan, pemantauan profil pemain, pendaftaran perlawanan persahabatan (scrim) dan kejohanan rasmi.
+                    </p>
+                </div>
+                <div class="panel-tactical p-6 rounded flex flex-col justify-center items-center text-center">
+                    <img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" alt="Crest SRTEAM" class="h-24 w-auto mb-4 drop-shadow-[0_0_15px_rgba(74,222,128,0.4)]">
+                    <h3 class="text-xl font-bold text-white mb-2">Akses Terhad</h3>
+                    <p class="text-tactical-text mb-6">Pendaftaran diperlukan untuk mengakses Profil, Basecamp Chat, dan Pendaftaran Tournament.</p>
+                    <button onclick="navigateTo('login')" class="btn-tactical py-3 px-8 rounded w-full md:w-auto" id="btn-home-action">LOG MASUK / DAFTAR</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. HALAMAN LOG MASUK / DAFTAR -->
+        <section id="view-login" class="view-section hidden">
+            <div class="max-w-md mx-auto panel-tactical p-8 rounded mt-10">
+                <div class="text-center mb-8">
+                    <i class="fa-solid fa-fingerprint text-4xl text-tactical-green mb-3"></i>
+                    <h2 class="text-3xl font-bold text-white uppercase tracking-wider" id="auth-title">PENGESAHAN IDENTITI</h2>
+                    <p class="text-tactical-text text-sm font-mono mt-2" id="auth-subtitle">Sila log masuk untuk mengakses sistem</p>
+                </div>
+
+                <form id="auth-form" onsubmit="handleAuth(event)">
+                    <div class="mb-4">
+                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono" id="label-email" for="email">ALAMAT EMEL / ID / NO. WHATSAPP</label>
+                        <input class="input-tactical w-full p-3 rounded" id="email" type="text" required placeholder="member@srteam.com / 60123456789">
+                    </div>
+                    <div id="phone-group" class="mb-4 hidden">
+                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono" for="reg-phone">NOMBOR WHATSAPP (Mesti Sah)</label>
+                        <input class="input-tactical w-full p-3 rounded" id="reg-phone" type="text" placeholder="Contoh: 60123456789">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono" for="password">KATA LALUAN</label>
+                        <input class="input-tactical w-full p-3 rounded" id="password" type="password" required placeholder="••••••••">
+                    </div>
+                    
+                    <!-- Checkbox Ingat Saya -->
+                    <div class="mb-6 flex items-center justify-start" id="remember-group">
+                        <label class="flex items-center text-tactical-text text-xs font-mono cursor-pointer hover:text-white transition">
+                            <input type="checkbox" id="remember-me" class="mr-2 w-4 h-4 accent-tactical-green" checked>
+                            Kekal Log Masuk (Ingat Saya)
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn-tactical w-full py-3 rounded mb-4" id="auth-submit-btn">LOG MASUK</button>
+                </form>
+                
+                <div class="text-center mt-4 border-t border-tactical-border pt-4">
+                    <p class="text-tactical-text text-sm" id="auth-switch-text">
+                        Belum mempunyai akses? 
+                        <a onclick="toggleAuthMode()" class="cursor-pointer text-tactical-green hover:underline font-bold">Mohon Pendaftaran</a>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. HALAMAN PROFIL -->
+        <section id="view-profile" class="view-section hidden">
+            <h2 class="text-3xl font-bold text-white mb-6 border-b border-tactical-border pb-2 uppercase"><i class="fa-solid fa-user-astronaut text-tactical-green mr-2"></i> DOSIER MEMBER</h2>
+            
+            <div id="profile-display" class="panel-tactical p-8 rounded flex flex-col md:flex-row gap-8 items-center md:items-start relative">
+                <button id="btn-edit-profile" onclick="toggleEditProfile()" class="absolute top-4 right-4 text-tactical-text hover:text-white transition text-xs border border-tactical-border px-3 py-1 rounded bg-tactical-dark hover:bg-tactical-green hover:text-black"><i class="fa-solid fa-pen-to-square"></i> KEMASKINI</button>
+                <div class="w-32 h-32 rounded-full bg-tactical-dark border-2 border-tactical-green flex items-center justify-center text-5xl text-tactical-greenDark shadow-[0_0_15px_rgba(74,222,128,0.3)] shrink-0 overflow-hidden">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="flex-grow w-full">
+                    <h3 class="text-3xl font-bold text-white" id="profile-nickname">NICKNAME</h3>
+                    <p class="text-tactical-text font-mono text-sm mb-1" id="profile-email-display">ID: member@srteam.com</p>
+                    <p class="text-tactical-green font-mono mb-2" id="profile-role">PERANAN: ANGGOTA</p>
+                    
+                    <!-- Pautan WhatsApp -->
+                    <div class="mb-4">
+                        <a id="profile-wa-link" href="#" target="_blank" class="inline-flex items-center gap-2 bg-green-900/40 text-green-400 border border-green-600 px-3 py-1.5 rounded text-xs hover:bg-green-600 hover:text-white transition shadow-sm shadow-green-900/50">
+                            <i class="fa-brands fa-whatsapp text-sm"></i> <span id="profile-phone" class="font-bold tracking-wider">Tiada Nombor</span>
+                        </a>
+                    </div>
+                    
+                    <div class="mb-4 bg-tactical-dark p-4 rounded border border-tactical-border">
+                        <h4 class="text-xs text-tactical-green font-mono mb-1"><i class="fa-solid fa-book-open"></i> BIO (KEPAKARAN TAKTIKAL)</h4>
+                        <p class="text-white text-sm" id="profile-bio">Tiada bio ditetapkan.</p>
+                    </div>
+
+                    <div class="mb-6 bg-tactical-dark p-4 rounded border border-tactical-border">
+                        <h4 class="text-xs text-tactical-green font-mono mb-1"><i class="fa-solid fa-clock-rotate-left"></i> STORY TERKINI</h4>
+                        <p class="text-white text-sm italic" id="profile-story">"Tiada laporan terkini."</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-tactical-dark p-3 rounded border border-tactical-border">
+                            <span class="text-xs text-tactical-text font-mono block mb-1">STATUS AKSES</span>
+                            <span class="text-white font-bold text-green-500">DILULUSKAN</span>
+                        </div>
+                        <div class="bg-tactical-dark p-3 rounded border border-tactical-border">
+                            <span class="text-xs text-tactical-text font-mono block mb-1">KLAN UTAMA</span>
+                            <span class="text-white font-bold">SRTEAM ESPORT</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Borang Kemaskini Profil (Tersembunyi) -->
+            <div id="profile-edit-form" class="panel-tactical p-8 rounded hidden mt-6 border-t-4 border-t-tactical-green">
+                <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2">KEMASKINI DOSIER PERIBADI</h3>
+                <form onsubmit="saveProfile(event)">
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">USERNAME / EMEL PENGGUNA</label>
+                            <input class="input-tactical w-full p-3 rounded" id="edit-email" type="text" required>
+                        </div>
+                        <div>
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">TUKAR KATA LALUAN</label>
+                            <input class="input-tactical w-full p-3 rounded" id="edit-password" type="text" placeholder="(Biar kosong jika tak mahu tukar)">
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NICKNAME (IGN)</label>
+                            <input class="input-tactical w-full p-3 rounded" id="edit-nickname" type="text" placeholder="Cth: SR Killer">
+                        </div>
+                        <div>
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NO. WHATSAPP</label>
+                            <input class="input-tactical w-full p-3 rounded" id="edit-phone" type="text" placeholder="Contoh: 60123456789">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">BIO (PENGENALAN DIRI)</label>
+                        <textarea class="input-tactical w-full p-3 rounded" id="edit-bio" rows="2" placeholder="Ceritakan sikit tentang anda..."></textarea>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">STORY (STATUS HARI INI)</label>
+                        <input class="input-tactical w-full p-3 rounded" id="edit-story" type="text" placeholder="Apa status pemikiran anda hari ini?">
+                    </div>
+                    <div class="flex gap-2">
+                        <button type="submit" class="btn-tactical py-3 px-6 rounded flex-grow"><i class="fa-solid fa-floppy-disk mr-2"></i> SIMPAN PERUBAHAN</button>
+                        <button type="button" onclick="toggleEditProfile()" class="bg-tactical-dark text-white border border-tactical-border py-3 px-6 rounded hover:bg-tactical-panel transition">BATAL</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- 4. MAKLUMAT KLAN -->
+        <section id="view-clan" class="view-section hidden">
+            <h2 class="text-3xl font-bold text-white mb-6 border-b border-tactical-border pb-2 uppercase"><i class="fa-solid fa-network-wired text-tactical-green mr-2"></i> DOSIER SEJARAH SRTEAM</h2>
+            
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Sejarah Operasi (Timeline) -->
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="panel-tactical p-6 rounded relative border-l-4 border-l-gray-600">
+                        <div class="absolute -left-3 top-6 w-5 h-5 bg-gray-600 rounded-full border-4 border-tactical-dark"></div>
+                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-flask text-gray-400 mr-2"></i> Fasa 1: "Smart Research Team" (2019)</h3>
+                        <p class="text-tactical-text font-mono text-sm leading-relaxed mb-2">
+                            SRTEAM mula ditubuhkan pada era Perintah Kawalan Pergerakan (PKP) bermula di medan PUBG Mobile. Pada asalnya, kami dikenali sebagai skuad yang bereksperimen dengan pelbagai kaedah (termasuk *cheats*) untuk menguasai perlawanan—mengukuhkan nama "Research" dalam identiti awal kami.
+                        </p>
+                    </div>
+
+                    <div class="panel-tactical p-6 rounded relative border-l-4 border-l-blue-600">
+                        <div class="absolute -left-3 top-6 w-5 h-5 bg-blue-600 rounded-full border-4 border-tactical-dark"></div>
+                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-rotate text-blue-400 mr-2"></i> Fasa 2: Era Transformasi "Seruan Team"</h3>
+                        <p class="text-tactical-text font-mono text-sm leading-relaxed mb-2">
+                            Pelancaran PUBG: New State Global menjadi titik perubahan. Kami meninggalkan gelaran "squad cheater" dan berevolusi menjadi klan profesional sepenuhnya di bawah nama **Seruan Team**—membawa maksud panggilan untuk berjuang secara bersih dan teratur. Kami terus melebarkan sayap kompetitif ke dalam Apex Legends Mobile dan menyertai pelbagai kejohanan.
+                        </p>
+                    </div>
+
+                    <div class="panel-tactical p-6 rounded relative border-l-4 border-l-tactical-green">
+                        <div class="absolute -left-3 top-6 w-5 h-5 bg-tactical-green rounded-full border-4 border-tactical-dark shadow-[0_0_10px_#4ade80]"></div>
+                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-rocket text-tactical-green mr-2"></i> Fasa 3: Kebangkitan "Spectral Rangers" (2025)</h3>
+                        <p class="text-tactical-text font-mono text-sm leading-relaxed mb-4">
+                            Selepas penutupan New State dan Apex Mobile, SRTEAM berundur seketika ke dalam bayang-bayang. Tahun 2025, dengan kehadiran **Delta Force Mobile**, kami bangkit semula secara rasmi sebagai **Spectral Rangers Team**.
+                        </p>
+                        
+                        <div class="bg-tactical-dark p-4 rounded border border-tactical-border font-mono text-xs text-tactical-text space-y-3">
+                            <p><strong class="text-white">SPECTRAL:</strong> Sesuatu yang bayangan, halimunan, atau dimensi lain. Mencerminkan strategi sulit dan pergerakan senyap di medan perang.</p>
+                            <p><strong class="text-white">RANGERS:</strong> Simbol unit khas yang bergerak pantas dan mahir dalam pelbagai medan (pasukan elit penyusup).</p>
+                            <p><strong class="text-white">TEAM:</strong> Kekuatan dalam kebersamaan — satu pasukan, satu perjuangan.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="panel-tactical p-6 rounded mt-4 text-center border border-tactical-green bg-tactical-greenDark/10">
+                        <p class="text-tactical-green font-bold text-sm tracking-widest uppercase">
+                            "Bukan sekadar nama, ia adalah legasi. Dari zaman gelap ke profesionalisme, dari bayang-bayang ke pentas kebangkitan."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Statistik & Identiti -->
+                <div class="space-y-6">
+                    <div class="panel-tactical p-6 rounded">
+                        <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-fingerprint text-tactical-green mr-2"></i> Identiti Pangkalan</h3>
+                        <ul class="space-y-4 font-mono text-sm">
+                            <li class="flex flex-col border-b border-tactical-border pb-2">
+                                <span class="text-tactical-text text-xs mb-1">NAMA RASMI KLAN</span>
+                                <span class="text-white font-bold text-base">SPECTRAL RANGERS TEAM</span>
+                            </li>
+                            <li class="flex justify-between border-b border-tactical-border pb-2">
+                                <span class="text-tactical-text">TAG PANGKALAN</span>
+                                <span class="text-tactical-green font-bold text-lg">[SR]</span>
+                            </li>
+                            <li class="flex justify-between border-b border-tactical-border pb-2">
+                                <span class="text-tactical-text">TAHUN ASAS</span>
+                                <span class="text-white font-bold">2019</span>
+                            </li>
+                            <li class="flex justify-between border-b border-tactical-border pb-2">
+                                <span class="text-tactical-text">KAPTEN / PENGASAS</span>
+                                <span class="text-white font-bold">BangYan</span>
+                            </li>
+                            <li class="flex justify-between">
+                                <span class="text-tactical-text">STATUS OPERASI</span>
+                                <span class="text-green-500 font-bold animate-pulse">AKTIF (2025)</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="panel-tactical p-6 rounded">
+                        <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-gamepad text-tactical-green mr-2"></i> Rekod Pertempuran</h3>
+                        <div class="flex flex-wrap gap-2 font-mono text-xs">
+                            <span class="bg-gray-800 text-gray-300 px-3 py-1 rounded border border-gray-600">PUBG Mobile</span>
+                            <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded border border-blue-600">PUBG: New State</span>
+                            <span class="bg-red-900 text-red-300 px-3 py-1 rounded border border-red-600">Apex Legends Mobile</span>
+                            <span class="bg-tactical-greenDark text-tactical-green px-3 py-1 rounded border border-tactical-green font-bold">Delta Force Mobile</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. BASECAMP CHAT -->
+        <section id="view-chat" class="view-section hidden h-[70vh] flex flex-col">
+            <h2 class="text-3xl font-bold text-white mb-4 border-b border-tactical-border pb-2 uppercase"><i class="fa-solid fa-walkie-talkie text-tactical-green mr-2"></i> BASECAMP CHAT</h2>
+            <div class="panel-tactical rounded flex-grow flex flex-col overflow-hidden border border-tactical-border">
+                <div class="bg-tactical-dark p-2 text-center text-xs font-mono text-tactical-text border-b border-tactical-border">
+                    <i class="fa-solid fa-lock text-green-500 mr-1"></i> SALURAN KOMUNIKASI SELAMAT ENKRIPSI 256-BIT
+                </div>
+                <div class="flex-grow p-4 overflow-y-auto space-y-4 font-mono text-sm" id="chat-messages">
+                    <!-- Mesej Dummy -->
+                    <div class="flex flex-col items-start">
+                        <span class="text-xs text-tactical-text mb-1">SYSTEM [00:00]</span>
+                        <div class="bg-tactical-dark border border-tactical-border p-2 rounded text-tactical-green max-w-[80%]">
+                            Pangkalan data komunikasi sedia. Menunggu input operator...
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4 bg-tactical-dark border-t border-tactical-border">
+                    <form onsubmit="sendChat(event)" class="flex gap-2">
+                        <input type="text" id="chat-input" class="input-tactical flex-grow p-2 rounded" placeholder="Hantar mesej ke pangkalan..." autocomplete="off">
+                        <button type="submit" class="btn-tactical px-6 rounded"><i class="fa-solid fa-paper-plane"></i></button>
+                    </form>
+                    <!-- Butang TTS Baharu -->
+                    <div class="mt-3 flex justify-between items-center">
+                        <button type="button" onclick="playLastAITTS()" class="text-xs text-blue-400 hover:text-white flex items-center gap-2 transition bg-blue-900/20 px-3 py-1.5 rounded border border-blue-900/50 shadow-sm">
+                            <i class="fa-solid fa-volume-high"></i> <span id="tts-status">Dengar Suara AI Terakhir</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. PENDAFTARAN TOURNAMENT / SCRIM -->
+        <section id="view-tournament" class="view-section hidden">
+            <h2 class="text-3xl font-bold text-white mb-6 border-b border-tactical-border pb-2 uppercase"><i class="fa-solid fa-trophy text-tactical-green mr-2"></i> SCRIM & TOUR</h2>
+            
+            <!-- Info Scrim / Tour Terkini (Mini Blog) -->
+            <div class="panel-tactical p-8 rounded max-w-2xl mx-auto border-l-4 border-l-yellow-500 mb-8" id="tournament-announcements-container">
+                <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-tower-broadcast text-yellow-500 mr-2"></i> MAKLUMAT MISI TERKINI</h3>
+                <div id="tournament-announcements-list" class="space-y-4">
+                    <!-- Akan diisi oleh JavaScript -->
+                </div>
+            </div>
+
+            <div class="panel-tactical p-8 rounded max-w-2xl mx-auto border-l-4 border-l-blue-600">
+                <p class="text-tactical-text font-mono mb-6 text-sm">Sila isikan IGN rasmi dan Nombor WhatsApp untuk tujuan pendaftaran ke dalam senarai roster. Pengesahan daripada Command Center diperlukan selepas memohon.</p>
+                
+                <form onsubmit="submitTournament(event)">
+                    <div class="mb-4">
+                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">IN-GAME NAME (IGN)</label>
+                        <input class="input-tactical w-full p-3 rounded text-xl" type="text" id="tour-ign" required placeholder="Cth: SR BangYan">
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NOMBOR WHATSAPP</label>
+                        <input class="input-tactical w-full p-3 rounded text-xl tracking-widest" type="text" id="tour-wa" required placeholder="01X-XXXXXXX">
+                    </div>
+                    <button type="submit" class="btn-tactical w-full py-4 rounded text-lg"><i class="fa-solid fa-file-signature mr-2"></i> HANTAR PENDAFTARAN</button>
+                </form>
+            </div>
+
+            <!-- Senarai Roster Yang Telah Disahkan -->
+            <div class="panel-tactical p-8 rounded max-w-2xl mx-auto border-l-4 border-l-green-600 mt-8">
+                <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-list-check text-tactical-green mr-2"></i> SENARAI ROSTER DISAHKAN</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left font-mono text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-tactical-dark border-y border-tactical-border text-tactical-text">
+                                <th class="p-3">TARIKH</th>
+                                <th class="p-3">IGN / NAMA (PROFIL)</th>
+                                <th class="p-3">STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="approved-tour-list">
+                            <!-- Akan diisi oleh JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ADMIN PANEL (KHAS) -->
+        <section id="view-admin" class="view-section hidden">
+            <h2 class="text-3xl font-bold text-white mb-6 border-b border-red-800 pb-2 uppercase"><i class="fa-solid fa-user-shield text-red-500 mr-2"></i> COMMAND CENTER</h2>
+            
+            <div class="grid lg:grid-cols-4 gap-6">
+                <!-- Statistik Admin -->
+                <div class="lg:col-span-1 space-y-4">
+                    <div class="panel-tactical p-4 rounded border-l-red-500">
+                        <h4 class="text-tactical-text text-xs font-mono mb-1">REKRUT BARU (PENDING)</h4>
+                        <div class="text-3xl font-bold text-yellow-500" id="stat-pending">0</div>
+                    </div>
+                    <div class="panel-tactical p-4 rounded border-l-green-500">
+                        <h4 class="text-tactical-text text-xs font-mono mb-1">MEMBER AKTIF</h4>
+                        <div class="text-3xl font-bold text-green-500" id="stat-active">0</div>
+                    </div>
+                    <div class="panel-tactical p-4 rounded border-l-blue-500">
+                        <h4 class="text-tactical-text text-xs font-mono mb-1">SCRIM & TOUR PENDING</h4>
+                        <div class="text-3xl font-bold text-blue-500" id="stat-tour-pending">0</div>
+                    </div>
+                </div>
+
+                <!-- Senarai Pengesahan (Menggunakan Tab) -->
+                <div class="lg:col-span-3">
+                    <!-- Tab Navigasi -->
+                    <div class="flex border-b border-tactical-border mb-6">
+                        <button onclick="switchAdminTab('tab-members')" id="btn-tab-members" class="admin-tab-btn px-6 py-3 font-bold text-tactical-green border-b-2 border-tactical-green bg-tactical-panel transition uppercase tracking-wider text-sm">Data Member</button>
+                        <button onclick="switchAdminTab('tab-tours')" id="btn-tab-tours" class="admin-tab-btn px-6 py-3 font-bold text-tactical-text hover:text-white transition uppercase tracking-wider text-sm">Scrim & Tour</button>
+                    </div>
+
+                    <!-- Tab Content: Data Member -->
+                    <div id="tab-members" class="admin-tab-content block">
+                        <div class="panel-tactical p-6 rounded">
+                            <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-users text-tactical-green mr-2"></i> Pangkalan Data Member</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left font-mono text-sm border-collapse min-w-[700px]">
+                                    <thead>
+                                        <tr class="bg-tactical-dark border-y border-tactical-border text-tactical-text">
+                                            <th class="p-3">TARIKH DAFTAR</th>
+                                            <th class="p-3">ID / NICKNAME</th>
+                                            <th class="p-3">NO. WA</th>
+                                            <th class="p-3">PERANAN</th>
+                                            <th class="p-3">STATUS</th>
+                                            <th class="p-3 text-right">TINDAKAN</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-user-list">
+                                        <!-- Akan diisi oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab Content: Scrim & Tour -->
+                    <div id="tab-tours" class="admin-tab-content hidden">
+                        
+                        <!-- Urus Maklumat Misi (Admin Panel) -->
+                        <div class="panel-tactical p-6 rounded mb-6 border-l-4 border-l-yellow-500">
+                            <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-bullhorn text-yellow-500 mr-2"></i> Urus Maklumat Misi (Max 3)</h3>
+                            <form onsubmit="submitAnnouncement(event)" class="mb-4">
+                                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                    <div>
+                                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">TAJUK ACARA</label>
+                                        <input type="text" id="announce-title" class="input-tactical w-full p-2 rounded" required placeholder="Cth: Scrim Kumpulan A">
+                                    </div>
+                                    <div>
+                                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">TARIKH & MASA</label>
+                                        <input type="datetime-local" id="announce-datetime" class="input-tactical w-full p-2 rounded" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-tactical py-2 px-4 rounded text-sm"><i class="fa-solid fa-plus mr-2"></i> TAMBAH MAKLUMAT</button>
+                            </form>
+                            <div id="admin-announcements-list" class="space-y-3">
+                                <!-- Akan diisi oleh JavaScript -->
+                            </div>
+                        </div>
+
+                        <div class="panel-tactical p-6 rounded">
+                            <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-trophy text-tactical-green mr-2"></i> Pengesahan Scrim & Tour</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left font-mono text-sm border-collapse min-w-[600px]">
+                                    <thead>
+                                        <tr class="bg-tactical-dark border-y border-tactical-border text-tactical-text">
+                                            <th class="p-3">MASA</th>
+                                            <th class="p-3">IGN PENGGUNA</th>
+                                            <th class="p-3">WHATSAPP</th>
+                                            <th class="p-3">STATUS</th>
+                                            <th class="p-3 text-right">TINDAKAN</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-tour-list">
+                                        <!-- Akan diisi oleh JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Edit Profil (Khusus Admin) -->
+            <div id="admin-edit-modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4">
+                <div class="panel-tactical p-6 rounded border border-tactical-green w-full max-w-md shadow-[0_0_20px_rgba(74,222,128,0.2)]">
+                    <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-user-pen text-tactical-green mr-2"></i> UBAHSUAI DOSIER</h3>
+                    <form onsubmit="saveAdminEditProfile(event)">
+                        <input type="hidden" id="admin-edit-id">
+                        <div class="mb-4">
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">USERNAME / EMEL PENGGUNA</label>
+                            <input class="input-tactical w-full p-3 rounded" id="admin-edit-email" type="text" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">KATA LALUAN</label>
+                            <input class="input-tactical w-full p-3 rounded" id="admin-edit-password" type="text" required>
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NICKNAME IN-GAME</label>
+                            <input class="input-tactical w-full p-3 rounded" id="admin-edit-nickname" type="text">
+                        </div>
+                        <div class="flex justify-end gap-2">
+                            <button type="button" onclick="closeAdminEditModal()" class="px-5 py-2 border border-tactical-border bg-tactical-dark rounded text-tactical-text hover:text-white transition">BATAL</button>
+                            <button type="submit" class="px-5 py-2 bg-tactical-greenDark border border-tactical-green rounded text-white hover:bg-tactical-green hover:text-black transition font-bold">SIMPAN</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Pengaki / Footer -->
+    <footer class="bg-tactical-dark border-t border-tactical-border mt-auto relative z-10">
+        <div class="container mx-auto px-4 py-6 flex flex-col gap-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex flex-col items-center md:items-start">
+                    <span class="text-tactical-text font-mono text-sm">SISTEM HAK CIPTA © <span id="current-year"></span></span>
+                    <a href="https://tiktok.com/@bangyanasli" target="_blank" class="text-white hover:text-tactical-green font-bold transition">
+                        DIBANGUNKAN OLEH BANGYAN <i class="fa-brands fa-tiktok text-xs ml-1"></i> @bangyanasli
+                    </a>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <span class="text-tactical-text font-mono text-sm hidden md:inline">KOMUNIKASI RASMI:</span>
+                    <a href="https://tiktok.com/@srteamofficial" target="_blank" class="btn-tactical py-2 px-4 rounded text-sm flex items-center gap-2">
+                        <i class="fa-brands fa-tiktok"></i> @srteamofficial
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bahagian Menu Kawalan (Footer Actions) -->
+            <div id="footer-actions" class="flex flex-wrap justify-center md:justify-end gap-3 border-t border-tactical-border/50 pt-4 hidden">
+                <!-- Akan diisi oleh JavaScript -->
+            </div>
+        </div>
+    </footer>
+
+    <!-- Logik Sistem Pangkalan Data Awan (Firebase) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        let firebaseUser = null;
+
+        const ADMIN_CREDENTIALS = { email: 'bangyanasli', password: 'abgyan92', role: 'superadmin' };
+        let users = [];
+        let tournaments = [];
+        let announcements = []; // Tetingkap memori untuk pengumuman misi
+        
+        // TETAPAN BAHARU: Semak LocalStorage dahulu, kemudian SessionStorage
+        let currentUser = JSON.parse(localStorage.getItem('srteam_session')) || JSON.parse(sessionStorage.getItem('srteam_session')) || null;
+        let isLoginMode = true;
+
+        // Command Center dipadam dari navLinks utama untuk dipindahkan ke footer
+        const navLinks = [
+            { id: 'profile', label: 'PROFIL', icon: 'fa-user-astronaut', reqAuth: true },
+            { id: 'clan', label: 'KLAN INFO', icon: 'fa-network-wired', reqAuth: true },
+            { id: 'chat', label: 'BASECAMP', icon: 'fa-walkie-talkie', reqAuth: true },
+            { id: 'tournament', label: 'SCRIM & TOUR', icon: 'fa-trophy', reqAuth: true }
+        ];
+
+        async function init() {
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            window.updateNavigation();
+            
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                onAuthStateChanged(auth, (user) => {
+                    firebaseUser = user;
+                    if (user) {
+                        setupFirestoreListeners();
+                    }
+                });
+            } catch (error) {
+                window.showAlert("Gagal menyambung ke pangkalan data utama.", "error");
+            }
+
+            window.navigateTo('home');
+        }
+
+        function setupFirestoreListeners() {
+            if (!firebaseUser) return;
+
+            // Dengar Users
+            const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_users');
+            onSnapshot(usersRef, (snapshot) => {
+                users = [];
+                snapshot.forEach(doc => {
+                    users.push({ id: doc.id, ...doc.data() });
+                });
+
+                if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin')) {
+                    window.renderAdminPanel();
+                }
+
+                if (currentUser) {
+                    const myData = users.find(u => u.email === currentUser.email);
+                    if (myData) {
+                        // Logout auto jika kena ban
+                        if(myData.status === 'banned') {
+                            window.handleLogout();
+                            window.showAlert('Akses ditarik! Anda telah di BAN dari sistem.', 'error');
+                            return;
+                        }
+                        currentUser = myData;
+                        
+                        // Kemaskini simpanan memori
+                        if (localStorage.getItem('srteam_session')) {
+                            localStorage.setItem('srteam_session', JSON.stringify(currentUser));
+                        } else {
+                            sessionStorage.setItem('srteam_session', JSON.stringify(currentUser));
+                        }
+                        
+                        window.updateNavigation();
+                        // Jika berada di view-profile, render semula
+                        const profileView = document.getElementById('view-profile');
+                        if(profileView && !profileView.classList.contains('hidden')) {
+                            window.navigateTo('profile');
+                        }
+                    }
+                }
+            });
+
+            // Dengar Chat
+            const chatRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats');
+            onSnapshot(chatRef, (snapshot) => {
+                const chats = [];
+                snapshot.forEach(doc => chats.push({ id: doc.id, ...doc.data() }));
+                chats.sort((a, b) => a.timestamp - b.timestamp);
+                renderChats(chats);
+            });
+
+            // Dengar Tournament & Scrim
+            const tourRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments');
+            onSnapshot(tourRef, (snapshot) => {
+                tournaments = [];
+                snapshot.forEach(doc => tournaments.push({ id: doc.id, ...doc.data() }));
+                tournaments.sort((a, b) => b.timestamp - a.timestamp); // Terbaru di atas
+                if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin')) {
+                    window.renderAdminPanel();
+                }
+                window.renderApprovedTournaments(); // Refresh list disahkan
+            });
+
+            // Dengar Pengumuman Misi
+            const announceRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_announcements');
+            onSnapshot(announceRef, (snapshot) => {
+                announcements = [];
+                snapshot.forEach(doc => announcements.push({ id: doc.id, ...doc.data() }));
+                announcements.sort((a, b) => b.timestamp - a.timestamp); // Terbaru di atas
+                window.renderAnnouncements();
+                if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin')) {
+                    window.renderAdminAnnouncements();
+                }
+            });
+        }
+
+        window.updateNavigation = function() {
+            const mainNav = document.getElementById('main-nav');
+            const footerActions = document.getElementById('footer-actions');
+            let navHtml = '';
+            let footerHtml = '';
+            
+            navLinks.forEach(link => {
+                if (link.reqAuth && (!currentUser || currentUser.status !== 'approved')) return;
+
+                // Ikon dan Teks diatur SEBARIS (flex-row) untuk semua jenis skrin
+                navHtml += `
+                    <a href="javascript:void(0)" onclick="navigateTo('${link.id}')" class="text-tactical-text hover:text-tactical-green font-bold text-[10px] md:text-sm tracking-wider uppercase transition flex flex-row items-center gap-1.5 md:gap-2 flex-shrink-0 py-1 px-1 md:px-0">
+                        <i class="fa-solid ${link.icon} text-sm md:text-base"></i> 
+                        <span class="whitespace-nowrap">${link.label}</span>
+                    </a>
+                `;
+            });
+
+            if (currentUser) {
+                // Menjana butang kawalan khusus di Footer
+                if (currentUser.role === 'admin' || currentUser.role === 'superadmin') {
+                    footerHtml += `
+                        <button type="button" onclick="navigateTo('admin')" class="text-tactical-green hover:text-white font-bold text-[10px] md:text-xs tracking-wider uppercase transition flex flex-row items-center gap-1.5 md:gap-2 px-4 py-2 rounded bg-tactical-greenDark/20 border border-tactical-green shadow-[0_0_8px_rgba(74,222,128,0.2)]">
+                            <i class="fa-solid fa-user-shield text-sm"></i> COMMAND CENTER
+                        </button>
+                    `;
+                }
+
+                footerHtml += `
+                    <button type="button" onclick="handleLogout()" class="text-red-500 hover:text-red-400 font-bold text-[10px] md:text-xs tracking-wider uppercase transition flex flex-row items-center gap-1.5 md:gap-2 px-4 py-2 rounded bg-red-900/10 border border-red-900 shadow-[0_0_8px_rgba(220,38,38,0.2)]">
+                        <i class="fa-solid fa-power-off text-sm"></i> KELUAR
+                    </button>
+                `;
+
+                if (footerActions) {
+                    footerActions.innerHTML = footerHtml;
+                    footerActions.classList.remove('hidden');
+                }
+
+                const btnHomeAction = document.getElementById('btn-home-action');
+                if (btnHomeAction) btnHomeAction.classList.add('hidden');
+            } else {
+                if (footerActions) {
+                    footerActions.innerHTML = '';
+                    footerActions.classList.add('hidden');
+                }
+
+                // Hanya paparkan butang log masuk di halaman utama
+                const btnHomeAction = document.getElementById('btn-home-action');
+                if (btnHomeAction) btnHomeAction.classList.remove('hidden');
+            }
+
+            // Kemas kini Navigasi Utama
+            if (mainNav) mainNav.innerHTML = navHtml;
+        }
+
+        // Fungsi Tukar Tab Di Command Center
+        window.switchAdminTab = function(tabId) {
+            document.querySelectorAll('.admin-tab-content').forEach(el => {
+                el.classList.remove('block');
+                el.classList.add('hidden');
+            });
+            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+                btn.classList.remove('text-tactical-green', 'border-b-2', 'border-tactical-green', 'bg-tactical-panel');
+                btn.classList.add('text-tactical-text');
+            });
+
+            const activeTab = document.getElementById(tabId);
+            if (activeTab) {
+                activeTab.classList.remove('hidden');
+                activeTab.classList.add('block');
+            }
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-tactical-text');
+                activeBtn.classList.add('text-tactical-green', 'border-b-2', 'border-tactical-green', 'bg-tactical-panel');
+            }
+        }
+
+        window.navigateTo = function(viewId, targetEmail = null) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
+            
+            // Tambah Pelindungan Elemen Null di Sini
+            const mobileMenuElement = document.getElementById('mobile-menu');
+            if (mobileMenuElement) {
+                mobileMenuElement.classList.add('hidden');
+            }
+
+            const targetViewElement = document.getElementById(`view-${viewId}`);
+            if (targetViewElement) {
+                targetViewElement.classList.remove('hidden');
+            }
+
+            if (viewId === 'profile' && currentUser) {
+                let displayUser = currentUser;
+                const isOwnProfile = !targetEmail || targetEmail === currentUser.email;
+
+                if (!isOwnProfile) {
+                    displayUser = users.find(u => u.email === targetEmail) || currentUser;
+                }
+
+                const profileEmailDisplay = document.getElementById('profile-email-display');
+                if (profileEmailDisplay) profileEmailDisplay.textContent = `ID: ${displayUser.email}`;
+                
+                const profileNickname = document.getElementById('profile-nickname');
+                if (profileNickname) profileNickname.textContent = displayUser.nickname || displayUser.email.split('@')[0];
+                
+                let roleText = 'MEMBER';
+                if (displayUser.role === 'admin') roleText = 'KOMANDER (ADMIN)';
+                if (displayUser.role === 'superadmin') roleText = 'KAPTEN (SUPER ADMIN)';
+                
+                const profileRole = document.getElementById('profile-role');
+                if (profileRole) profileRole.textContent = `PERANAN: ${roleText}`;
+
+                // Integrasi Butang WhatsApp
+                const profileWaLink = document.getElementById('profile-wa-link');
+                const profilePhone = document.getElementById('profile-phone');
+                if (profileWaLink && profilePhone) {
+                    if (displayUser.phone && displayUser.phone.trim() !== '') {
+                        profileWaLink.style.display = 'inline-flex';
+                        // Bersihkan nombor dari sebarang aksara selain nombor untuk pautan wa.me
+                        const cleanPhone = displayUser.phone.replace(/[^0-9]/g, '');
+                        profileWaLink.href = `https://wa.me/${cleanPhone}`;
+                        profilePhone.textContent = displayUser.phone;
+                    } else {
+                        profileWaLink.style.display = 'none';
+                    }
+                }
+                
+                const profileBio = document.getElementById('profile-bio');
+                if (profileBio) profileBio.textContent = displayUser.bio || 'Tiada bio ditetapkan.';
+                
+                const profileStory = document.getElementById('profile-story');
+                if (profileStory) profileStory.textContent = displayUser.story ? `"${displayUser.story}"` : '"Tiada laporan terkini."';
+                
+                const btnEdit = document.getElementById('btn-edit-profile');
+                if (btnEdit) {
+                    btnEdit.style.display = isOwnProfile ? 'block' : 'none';
+                }
+
+                const profileEditForm = document.getElementById('profile-edit-form');
+                if (profileEditForm) profileEditForm.classList.add('hidden'); // Tutup form by default
+                
+                // Fallback kepada elemen lama jika perlu
+                const oldProfileEmail = document.getElementById('profile-email');
+                if (oldProfileEmail) oldProfileEmail.textContent = displayUser.email.toUpperCase();
+            }
+            if (viewId === 'admin') {
+                window.renderAdminPanel();
+                window.renderAdminAnnouncements();
+            }
+            if (viewId === 'tournament') {
+                window.renderApprovedTournaments();
+                window.renderAnnouncements();
+            }
+            window.hideAlert();
+        }
+
+        window.toggleEditProfile = function() {
+            const form = document.getElementById('profile-edit-form');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                document.getElementById('edit-email').value = currentUser.email || '';
+                document.getElementById('edit-nickname').value = currentUser.nickname || '';
+                document.getElementById('edit-phone').value = currentUser.phone || '';
+                document.getElementById('edit-bio').value = currentUser.bio || '';
+                document.getElementById('edit-story').value = currentUser.story || '';
+                document.getElementById('edit-password').value = ''; 
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+
+        window.saveProfile = async function(e) {
+            e.preventDefault();
+            if (!firebaseUser || !currentUser) {
+                window.showAlert('Sistem awan belum bersedia.', 'error');
+                return;
+            }
+            if (!currentUser.id || currentUser.id === 'superadmin_id') {
+                window.showAlert('Ralat: ID Rekod tiada. Sila muat semula halaman dan cuba lagi.', 'error');
+                return;
+            }
+
+            const newEmail = document.getElementById('edit-email').value.trim();
+            const newPass = document.getElementById('edit-password').value.trim();
+            const newNick = document.getElementById('edit-nickname').value.trim();
+            const newPhone = document.getElementById('edit-phone').value.trim();
+            const newBio = document.getElementById('edit-bio').value.trim();
+            const newStory = document.getElementById('edit-story').value.trim();
+
+            try {
+                const userDoc = doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', currentUser.id);
+                const updates = { email: newEmail, nickname: newNick, phone: newPhone, bio: newBio, story: newStory };
+                if (newPass) updates.password = newPass; // Update password hanya jika diisi
+                
+                await updateDoc(userDoc, updates);
+                window.showAlert('Profil berjaya dikemas kini.', 'success');
+                window.toggleEditProfile();
+            } catch (err) {
+                window.showAlert('Ralat semasa mengemas kini profil: ' + err.message, 'error');
+                console.error(err);
+            }
+        }
+
+        window.toggleAuthMode = function() {
+            isLoginMode = !isLoginMode;
+            document.getElementById('auth-title').textContent = isLoginMode ? 'PENGESAHAN IDENTITI' : 'PENDAFTARAN REKRUT';
+            document.getElementById('auth-subtitle').textContent = isLoginMode ? 'Sila log masuk untuk mengakses sistem' : 'Daftar butiran untuk kelulusan pentadbir';
+            document.getElementById('auth-submit-btn').textContent = isLoginMode ? 'LOG MASUK' : 'MOHON PENDAFTARAN';
+            
+            const phoneGroup = document.getElementById('phone-group');
+            const regPhone = document.getElementById('reg-phone');
+            const labelEmail = document.getElementById('label-email');
+            const rememberGroup = document.getElementById('remember-group');
+
+            if (isLoginMode) {
+                phoneGroup.classList.add('hidden');
+                rememberGroup.classList.remove('hidden');
+                regPhone.removeAttribute('required');
+                labelEmail.textContent = 'ALAMAT EMEL / ID / NO. WHATSAPP';
+                document.getElementById('auth-switch-text').innerHTML = 'Belum mempunyai akses? <a onclick="toggleAuthMode()" class="cursor-pointer text-tactical-green hover:underline font-bold">Mohon Pendaftaran</a>';
+            } else {
+                phoneGroup.classList.remove('hidden');
+                rememberGroup.classList.add('hidden');
+                regPhone.setAttribute('required', 'required');
+                labelEmail.textContent = 'ALAMAT EMEL / ID';
+                document.getElementById('auth-switch-text').innerHTML = 'Sudah mempunyai akses? <a onclick="toggleAuthMode()" class="cursor-pointer text-tactical-green hover:underline font-bold">Log Masuk Sini</a>';
+            }
+            window.hideAlert();
+        }
+
+        window.handleAuth = async function(e) {
+            e.preventDefault();
+            const emailOrPhone = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('remember-me') ? document.getElementById('remember-me').checked : false;
+
+            if (isLoginMode) {
+                // Bypass / Setup untuk Super Admin BangYan
+                if (emailOrPhone === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
+                    let saUser = users.find(u => u.email === ADMIN_CREDENTIALS.email);
+                    
+                    if (!saUser && firebaseUser) {
+                        try {
+                            const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_users'), {
+                                email: ADMIN_CREDENTIALS.email,
+                                password: ADMIN_CREDENTIALS.password,
+                                status: 'approved',
+                                role: 'superadmin',
+                                nickname: 'BangYan',
+                                phone: '',
+                                createdAt: Date.now()
+                            });
+                            saUser = { id: docRef.id, email: ADMIN_CREDENTIALS.email, role: 'superadmin', status: 'approved', nickname: 'BangYan', phone: '' };
+                        } catch(err) { console.error("Gagal cipta admin:", err); }
+                    }
+
+                    currentUser = saUser || { id: 'superadmin_id', email: ADMIN_CREDENTIALS.email, role: 'superadmin', status: 'approved', nickname: 'BangYan', phone: '' };
+                    
+                    if (rememberMe) {
+                        localStorage.setItem('srteam_session', JSON.stringify(currentUser));
+                    } else {
+                        sessionStorage.setItem('srteam_session', JSON.stringify(currentUser));
+                    }
+
+                    window.updateNavigation();
+                    window.navigateTo('home');
+                    window.showAlert(`Akses Kapten (Super Admin) Diberikan.`, 'success');
+                    return;
+                }
+
+                // Pengguna biasa - semak email ATAU nombor telefon
+                const user = users.find(u => (u.email === emailOrPhone || u.phone === emailOrPhone) && u.password === password);
+                if (user) {
+                    if (user.status === 'pending') {
+                        window.showAlert('Akses ditolak. Akaun sedang menunggu pengesahan Command Center.', 'warning');
+                    } else if (user.status === 'banned') {
+                        window.showAlert('AKSES DISEKAT: Akaun anda telah digantung oleh Komander.', 'error');
+                    } else {
+                        currentUser = user;
+                        
+                        // Simpan Sesi Berdasarkan Pilihan
+                        if (rememberMe) {
+                            localStorage.setItem('srteam_session', JSON.stringify(currentUser));
+                        } else {
+                            sessionStorage.setItem('srteam_session', JSON.stringify(currentUser));
+                        }
+
+                        window.updateNavigation();
+                        window.navigateTo('home');
+                        window.showAlert(`Selamat kembali ke pangkalan.`, 'success');
+                    }
+                } else {
+                    window.showAlert('Kredensial tidak sah atau belum mendaftar.', 'error');
+                }
+            } else {
+                const regPhoneValue = document.getElementById('reg-phone').value.trim();
+                
+                if (users.some(u => u.email === emailOrPhone || (u.phone && u.phone === regPhoneValue)) || emailOrPhone === ADMIN_CREDENTIALS.email) {
+                    window.showAlert('Emel atau Nombor ini telah digunakan di dalam pangkalan data.', 'error');
+                    return;
+                }
+                if (!firebaseUser) return window.showAlert('Sistem awan belum sedia.', 'warning');
+
+                try {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_users'), {
+                        email: emailOrPhone, 
+                        phone: regPhoneValue,
+                        password: password, 
+                        status: 'pending', 
+                        role: 'user', 
+                        createdAt: Date.now()
+                    });
+                    window.showAlert('Pendaftaran menunggu pengesahan admin, sila tunggu sehingga di approve, baru boleh login.', 'success');
+                    window.toggleAuthMode();
+                    document.getElementById('auth-form').reset();
+                } catch (error) {
+                    window.showAlert('Pendaftaran gagal dihantar.', 'error');
+                }
+            }
+        }
+
+        window.handleLogout = function() {
+            currentUser = null;
+            // Padam kedua-dua sesi simpanan
+            localStorage.removeItem('srteam_session');
+            sessionStorage.removeItem('srteam_session');
+            window.updateNavigation();
+            window.navigateTo('home');
+            window.showAlert('Sesi ditamatkan. Anda telah log keluar.', 'success');
+        }
+
+        window.renderAdminPanel = function() {
+            const userList = document.getElementById('admin-user-list');
+            const tourList = document.getElementById('admin-tour-list');
+            let pendingUserCount = 0; let activeUserCount = 0; let pendingTourCount = 0;
+            const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
+
+            // 1. Render Users
+            let userHtml = '';
+            users.forEach((user) => {
+                if (user.id === currentUser.id) return; // Jangan papar diri sendiri
+                if (user.role === 'superadmin' && !isSuperAdmin) return; // Sorok SuperAdmin dari Admin biasa
+
+                if (user.status === 'pending') pendingUserCount++;
+                if (user.status === 'approved') activeUserCount++;
+
+                const statusColor = user.status === 'pending' ? 'text-yellow-500' : (user.status === 'banned' ? 'text-red-600' : 'text-green-500');
+                const roleBadge = user.role === 'admin' ? '<span class="text-blue-400 font-bold"><i class="fa-solid fa-shield"></i> ADMIN</span>' : 'MEMBER';
+
+                // Format Tarikh & Masa
+                let dateDisplay = '-';
+                if (user.createdAt) {
+                    const d = new Date(user.createdAt);
+                    const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
+                    const dayName = days[d.getDay()];
+                    const dateStr = d.toLocaleDateString('ms-MY');
+                    const timeStr = d.toLocaleTimeString('ms-MY', {hour: '2-digit', minute:'2-digit'});
+                    dateDisplay = `<span class="text-tactical-green font-bold">${dayName}</span><br>${dateStr}<br><span class="text-xs text-tactical-text mt-1 block"><i class="fa-regular fa-clock"></i> ${timeStr}</span>`;
+                }
+
+                let actionButtons = '';
+                if (user.status === 'pending') {
+                    actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-800 hover:bg-green-600 px-3 py-1 rounded text-xs text-white ml-1">LULUS</button>`;
+                    actionButtons += `<button onclick="deleteUser('${user.id}')" class="bg-red-800 hover:bg-red-600 px-3 py-1 rounded text-xs text-white ml-1">TOLAK</button>`;
+                } else {
+                    if (isSuperAdmin) {
+                        if (user.role !== 'admin') {
+                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">JADI ADMIN</button>`;
+                        } else {
+                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">BUANG ADMIN</button>`;
+                        }
+                        
+                        if (user.status !== 'banned') {
+                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'banned')" class="bg-red-900 hover:bg-red-600 px-2 py-1 rounded text-xs text-white ml-1">BAN</button>`;
+                        } else {
+                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-700 hover:bg-green-500 px-2 py-1 rounded text-xs text-white ml-1">UNBAN</button>`;
+                        }
+                        actionButtons += `<button onclick="openEditAdminModal('${user.id}')" class="bg-yellow-800 hover:bg-yellow-600 px-2 py-1 rounded text-xs text-white ml-1"><i class="fa-solid fa-pen"></i> EDIT</button>`;
+                    } else {
+                        actionButtons += `<span class="text-xs text-tactical-text"><i class="fa-solid fa-check text-green-500"></i> SAH</span>`;
+                    }
+                }
+
+                userHtml += `
+                    <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
+                        <td class="p-3 text-xs font-mono leading-tight">${dateDisplay}</td>
+                        <td class="p-3 text-white">${user.nickname || user.email}</td>
+                        <td class="p-3 text-tactical-green">${user.phone || '-'}</td>
+                        <td class="p-3">${roleBadge}</td>
+                        <td class="p-3 font-bold ${statusColor}">${user.status.toUpperCase()}</td>
+                        <td class="p-3 text-right">${actionButtons}</td>
+                    </tr>
+                `;
+            });
+            if (userList) userList.innerHTML = userHtml === '' ? `<tr><td colspan="6" class="p-4 text-center text-tactical-text">Tiada rekod member.</td></tr>` : userHtml;
+
+            // 2. Render Scrim & Tour
+            let tourHtml = '';
+            tournaments.forEach((tour) => {
+                if (tour.status === 'pending') pendingTourCount++;
+                const timeDate = new Date(tour.timestamp).toLocaleString('ms-MY', { dateStyle: 'short', timeStyle: 'short' });
+                const sColor = tour.status === 'pending' ? 'text-yellow-500' : (tour.status === 'approved' ? 'text-green-500' : 'text-red-500');
+                
+                let tourActions = '';
+                if (tour.status === 'pending') {
+                    tourActions += `<button onclick="updateTourStatus('${tour.id}', 'approved')" class="bg-green-800 hover:bg-green-600 px-2 py-1 rounded text-xs text-white ml-1">LULUS</button>`;
+                    tourActions += `<button onclick="updateTourStatus('${tour.id}', 'rejected')" class="bg-red-800 hover:bg-red-600 px-2 py-1 rounded text-xs text-white ml-1">TOLAK</button>`;
+                } else {
+                     tourActions += `<button onclick="deleteTour('${tour.id}')" class="bg-gray-800 hover:bg-gray-600 px-2 py-1 rounded text-xs text-white ml-1"><i class="fa-solid fa-trash"></i></button>`;
+                }
+
+                tourHtml += `
+                    <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
+                        <td class="p-3 text-white">${timeDate}</td>
+                        <td class="p-3 text-tactical-green font-bold">${tour.ign}</td>
+                        <td class="p-3 text-white">${tour.whatsapp}</td>
+                        <td class="p-3 font-bold ${sColor}">${tour.status.toUpperCase()}</td>
+                        <td class="p-3 text-right">${tourActions}</td>
+                    </tr>
+                `;
+            });
+            if (tourList) tourList.innerHTML = tourHtml === '' ? `<tr><td colspan="5" class="p-4 text-center text-tactical-text">Tiada rekod pendaftaran.</td></tr>` : tourHtml;
+
+            const statPending = document.getElementById('stat-pending');
+            if(statPending) statPending.textContent = pendingUserCount;
+            
+            const statActive = document.getElementById('stat-active');
+            if(statActive) statActive.textContent = activeUserCount;
+            
+            const statTourPending = document.getElementById('stat-tour-pending');
+            if(statTourPending) statTourPending.textContent = pendingTourCount;
+        }
+
+        // --- FUNGSI ADMIN SUPER (PENGGUNA) ---
+        window.updateUserStatus = async function(id, status) {
+            if (!firebaseUser) return;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { status: status });
+                window.showAlert(`Status pengguna ditukar kepada ${status}.`, 'success');
+            } catch (err) { console.error(err); }
+        }
+        window.deleteUser = async function(id) {
+            if(!confirm('Buang sepenuhnya pemohon ini?')) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id));
+                window.showAlert('Rekod berjaya dipadam.', 'warning');
+            } catch (err) { console.error(err); }
+        }
+        window.setRole = async function(id, role) {
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { role: role });
+                window.showAlert(`Peranan berjaya diubah ke ${role}.`, 'success');
+            } catch (err) { console.error(err); }
+        }
+        
+        window.openEditAdminModal = function(id) {
+            const u = users.find(x => x.id === id);
+            if(!u) return;
+            document.getElementById('admin-edit-id').value = id;
+            document.getElementById('admin-edit-email').value = u.email || '';
+            document.getElementById('admin-edit-password').value = u.password || '';
+            document.getElementById('admin-edit-nickname').value = u.nickname || '';
+            document.getElementById('admin-edit-modal').classList.remove('hidden');
+        }
+        window.closeAdminEditModal = function() { document.getElementById('admin-edit-modal').classList.add('hidden'); }
+        window.saveAdminEditProfile = async function(e) {
+            e.preventDefault();
+            const id = document.getElementById('admin-edit-id').value;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), {
+                    email: document.getElementById('admin-edit-email').value,
+                    password: document.getElementById('admin-edit-password').value,
+                    nickname: document.getElementById('admin-edit-nickname').value
+                });
+                window.showAlert('Profil member berjaya dimodifikasi.', 'success');
+                window.closeAdminEditModal();
+            } catch(err) { console.error(err); }
+        }
+
+        // --- FUNGSI ADMIN (SCRIM & TOUR) ---
+        window.updateTourStatus = async function(id, status) {
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments', id), { status: status });
+            } catch(err) { console.error(err); }
+        }
+        window.deleteTour = async function(id) {
+            if(confirm('Padam pendaftaran misi ini?')) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments', id));
+            }
+        }
+
+        window.renderApprovedTournaments = function() {
+            const listContainer = document.getElementById('approved-tour-list');
+            if (!listContainer) return;
+
+            let html = '';
+            const approvedTours = tournaments.filter(t => t.status === 'approved');
+
+            approvedTours.forEach(tour => {
+                const timeDate = new Date(tour.timestamp).toLocaleDateString('ms-MY');
+                html += `
+                    <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
+                        <td class="p-3 text-tactical-text">${timeDate}</td>
+                        <td class="p-3 font-bold">
+                            <a onclick="navigateTo('profile', '${tour.pemohon}')" class="cursor-pointer text-tactical-green hover:text-white transition flex items-center gap-2">
+                                <i class="fa-solid fa-user-astronaut text-xs"></i> ${tour.ign}
+                            </a>
+                        </td>
+                        <td class="p-3 text-green-500 font-bold text-xs"><i class="fa-solid fa-check"></i> DISAHKAN</td>
+                    </tr>
+                `;
+            });
+
+            if (html === '') {
+                html = `<tr><td colspan="3" class="p-4 text-center text-tactical-text text-xs">Belum ada roster yang disahkan.</td></tr>`;
+            }
+            listContainer.innerHTML = html;
+        }
+
+        // --- FUNGSI PENGUMUMAN MISI (MINI BLOG) ---
+        window.renderAnnouncements = function() {
+            const list = document.getElementById('tournament-announcements-list');
+            if (!list) return;
+
+            let html = '';
+            announcements.forEach(ann => {
+                const dt = new Date(ann.datetime);
+                const dateStr = dt.toLocaleDateString('ms-MY');
+                const timeStr = dt.toLocaleTimeString('ms-MY', {hour: '2-digit', minute:'2-digit'});
+
+                html += `
+                    <div class="bg-tactical-dark p-4 rounded border border-tactical-border relative overflow-hidden shadow-[0_4px_10px_rgba(0,0,0,0.3)]">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
+                        <h4 class="text-white font-bold text-lg mb-2">${ann.title}</h4>
+                        <div class="flex flex-wrap gap-x-4 gap-y-2 text-xs font-mono text-tactical-text mt-2 border-t border-tactical-border/50 pt-2">
+                            <span class="flex items-center gap-1"><i class="fa-regular fa-calendar text-tactical-green"></i> ${dateStr}</span>
+                            <span class="flex items-center gap-1"><i class="fa-regular fa-clock text-tactical-green"></i> ${timeStr}</span>
+                            <span class="flex items-center gap-1"><i class="fa-solid fa-user-shield text-blue-400"></i> Oleh: ${ann.author}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            if (html === '') {
+                html = '<p class="text-tactical-text text-sm font-mono italic">Tiada maklumat misi/scrim terkini buat masa ini.</p>';
+            }
+            list.innerHTML = html;
+        }
+
+        window.renderAdminAnnouncements = function() {
+            const list = document.getElementById('admin-announcements-list');
+            if (!list) return;
+
+            let html = '';
+            announcements.forEach(ann => {
+                const dt = new Date(ann.datetime);
+                const displayDt = dt.toLocaleString('ms-MY', { dateStyle: 'short', timeStyle: 'short' });
+                
+                html += `
+                    <div class="bg-tactical-dark p-3 rounded border border-tactical-border flex justify-between items-center hover:bg-tactical-panel transition">
+                        <div>
+                            <strong class="text-white block text-sm">${ann.title}</strong>
+                            <span class="text-xs text-tactical-text font-mono">${displayDt} | Oleh: <span class="text-tactical-green">${ann.author}</span></span>
+                        </div>
+                        <button type="button" onclick="deleteAnnouncement('${ann.id}')" class="bg-red-800 hover:bg-red-600 text-white px-3 py-1 rounded text-xs transition"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+            });
+            if (html === '') html = '<div class="text-tactical-text text-xs font-mono">Tiada maklumat aktif.</div>';
+            list.innerHTML = html;
+        }
+
+        window.submitAnnouncement = async function(e) {
+            e.preventDefault();
+            if (!firebaseUser || !currentUser) return;
+
+            if (announcements.length >= 3) {
+                window.showAlert('Maksimum 3 maklumat sahaja dibenarkan. Sila padam maklumat lama terlebih dahulu.', 'warning');
+                return;
+            }
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_announcements'), {
+                    title: document.getElementById('announce-title').value.trim(),
+                    datetime: document.getElementById('announce-datetime').value,
+                    author: (currentUser.nickname || currentUser.email.split('@')[0]).toUpperCase(),
+                    timestamp: Date.now()
+                });
+                window.showAlert('Maklumat misi berjaya ditambah.', 'success');
+                e.target.reset();
+            } catch (err) { 
+                window.showAlert('Gagal menambah maklumat.', 'error');
+                console.error(err); 
+            }
+        }
+
+        window.deleteAnnouncement = async function(id) {
+            if(confirm('Adakah anda pasti mahu memadam maklumat misi ini?')) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_announcements', id));
+                    window.showAlert('Maklumat misi dipadam.', 'success');
+                } catch (err) {
+                    window.showAlert('Gagal memadam.', 'error');
+                }
+            }
+        }
+
+        // --- FUNGSI TOURNAMENT & CHAT ---
+        window.submitTournament = async function(e) {
+            e.preventDefault();
+            if (!firebaseUser || !currentUser) return;
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments'), {
+                    ign: document.getElementById('tour-ign').value.trim(),
+                    whatsapp: document.getElementById('tour-wa').value.trim(),
+                    pemohon: currentUser.email,
+                    status: 'pending',
+                    timestamp: Date.now()
+                });
+                window.showAlert('Pendaftaran SCRIM & TOUR berjaya dihantar ke Command Center.', 'success');
+                e.target.reset();
+            } catch (err) { window.showAlert('Gagal menghantar permohonan.', 'error'); }
+        }
+
+        // Fungsi penterjemah Simbol (Markdown) ke HTML yang sesuai untuk Chat
+        window.formatChatMessage = function(text, isAI) {
+            if (!text) return '';
+            
+            // 1. Penapis HTML untuk keselamatan
+            let formatted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            // Warna untuk teks tebal bergantung kepada pengirim (AI atau Member)
+            const boldColor = isAI ? 'text-blue-300' : 'text-tactical-green';
+            
+            // 2. Blok Kod (Multi-line)
+            formatted = formatted.replace(/```([\s\S]*?)```/g, '<pre class="bg-black/80 p-2 rounded my-1 overflow-x-auto text-xs text-green-400 font-mono border border-tactical-border"><code>$1</code></pre>');
+
+            // 3. Tajuk / Heading (### Tajuk)
+            formatted = formatted.replace(/^###\s+(.*)$/gm, `<strong class="text-base block mt-2 mb-1 ${boldColor}">$1</strong>`);
+            formatted = formatted.replace(/^##\s+(.*)$/gm, `<strong class="text-lg block mt-2 mb-1 ${boldColor}">$1</strong>`);
+            formatted = formatted.replace(/^#\s+(.*)$/gm, `<strong class="text-xl block mt-2 mb-1 ${boldColor}">$1</strong>`);
+            
+            // 4. Titik peluru / Bullet points (* atau -)
+            formatted = formatted.replace(/^[\*-]\s+(.*)$/gm, '<span class="mr-1 text-tactical-green font-bold">•</span> $1');
+
+            // 5. Tulisan Tebal (Bold) **teks**
+            formatted = formatted.replace(/\*\*([^\*]+)\*\*/g, `<strong class="font-bold ${boldColor} drop-shadow-md">$1</strong>`);
+            
+            // 6. Tulisan Condong (Italic) *teks*
+            formatted = formatted.replace(/\*([^\*]+)\*/g, '<em class="italic opacity-90">$1</em>');
+            
+            // 7. Kod sebaris (Inline code) `teks`
+            formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-black/60 px-1 py-0.5 rounded font-mono text-xs text-yellow-300 border border-tactical-border/50">$1</code>');
+            
+            return formatted;
+        }
+
+        // --- FUNGSI AUDIO (TTS) ---
+        function base64ToUint8Array(base64) {
+            const binaryString = window.atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes;
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        function createWavBlob(pcmData, sampleRate) {
+            const buffer = new ArrayBuffer(44 + pcmData.length);
+            const view = new DataView(buffer);
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + pcmData.length, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, pcmData.length, true);
+
+            const pcmArray = new Uint8Array(buffer, 44);
+            pcmArray.set(pcmData);
+
+            return new Blob([view], { type: 'audio/wav' });
+        }
+
+        window.playLastAITTS = async function() {
+            const chatContainer = document.getElementById('chat-messages');
+            if (!chatContainer) return;
+            
+            // Cari elemen mesej AI (ia menggunakan class text-blue-100)
+            const aiMessages = chatContainer.querySelectorAll('.text-blue-100');
+            if (aiMessages.length === 0) {
+                window.showAlert('Bro, belum ada mesej dari AI untuk dibaca.', 'warning');
+                return;
+            }
+            
+            const lastAIMsgText = aiMessages[aiMessages.length - 1].textContent.trim();
+            const btnStatus = document.getElementById('tts-status');
+            const originalText = btnStatus.textContent;
+            btnStatus.textContent = "Menjana Audio...";
+
+            try {
+                const apiKey = ""; // API key disediakan pada waktu jalanan (runtime)
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+                
+                const payload = {
+                    contents: [{ parts: [{ text: lastAIMsgText }] }],
+                    generationConfig: {
+                        responseModalities: ["AUDIO"],
+                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Zephyr" } } } // Suara Zephyr (Kool & Taktikal)
+                    },
+                    model: "gemini-2.5-flash-preview-tts"
+                };
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('Gagal menjana audio');
+                
+                const result = await response.json();
+                const inlineData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData;
+                
+                if (inlineData && inlineData.data) {
+                    const pcmData = base64ToUint8Array(inlineData.data);
+                    let sampleRate = 24000;
+                    if (inlineData.mimeType) {
+                        const match = inlineData.mimeType.match(/rate=(\d+)/);
+                        if (match) sampleRate = parseInt(match[1], 10);
+                    }
+                    
+                    const wavBlob = createWavBlob(pcmData, sampleRate);
+                    const audioUrl = URL.createObjectURL(wavBlob);
+                    const audio = new Audio(audioUrl);
+                    
+                    btnStatus.textContent = "Sedang Bercakap...";
+                    audio.onended = () => { btnStatus.textContent = originalText; };
+                    await audio.play();
+                } else {
+                    throw new Error('Tiada data audio');
+                }
+            } catch (err) {
+                console.error(err);
+                window.showAlert('Gagal memproses audio TTS.', 'error');
+                btnStatus.textContent = originalText;
+            }
+        };
+
+        function renderChats(chats) {
+            const chatContainer = document.getElementById('chat-messages');
+            if (!chatContainer) return;
+            let html = '';
+            chats.forEach(chat => {
+                const time = new Date(chat.timestamp).toLocaleTimeString('ms-MY', { hour12: false, hour: '2-digit', minute: '2-digit' });
+                const nick = currentUser && (currentUser.nickname || currentUser.email.split('@')[0]).toUpperCase();
+                const isMe = chat.sender === nick;
+                const isAI = chat.sender === "A.I SYSTEM";
+                
+                // Terjemah mesej dengan fungsi format baru
+                const displayMessage = window.formatChatMessage(chat.message, isAI);
+                
+                if (isMe) {
+                    html += `
+                        <div class="flex flex-col items-end mb-4">
+                            <span class="text-xs text-tactical-text mb-1">${chat.sender} [${time}]</span>
+                            <div class="bg-tactical-greenDark border border-tactical-green p-2 rounded text-white max-w-[80%] text-right whitespace-pre-wrap leading-relaxed">
+                                ${displayMessage}
+                            </div>
+                        </div>`;
+                } else if (isAI) {
+                    html += `
+                        <div class="flex flex-col items-start mb-4">
+                            <span class="text-xs text-blue-400 font-bold mb-1"><i class="fa-solid fa-robot"></i> ${chat.sender} [${time}]</span>
+                            <div class="bg-blue-900/30 border border-blue-500 p-3 rounded text-blue-100 max-w-[80%] whitespace-pre-wrap shadow-[0_0_8px_rgba(59,130,246,0.2)] leading-relaxed">
+                                ${displayMessage}
+                            </div>
+                        </div>`;
+                } else {
+                    html += `
+                        <div class="flex flex-col items-start mb-4">
+                            <span class="text-xs text-tactical-text mb-1">${chat.sender} [${time}]</span>
+                            <div class="bg-tactical-dark border border-tactical-border p-2 rounded text-tactical-green max-w-[80%] whitespace-pre-wrap leading-relaxed">
+                                ${displayMessage}
+                            </div>
+                        </div>`;
+                }
+            });
+            chatContainer.innerHTML = html || `<div class="text-center text-tactical-text text-xs my-4">Tiada komunikasi direkodkan. Menunggu input...</div>`;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        window.sendChat = async function(e) {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+            if (!message || !currentUser || !firebaseUser) return;
+
+            const senderName = (currentUser.nickname || currentUser.email.split('@')[0]).toUpperCase();
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats'), {
+                    sender: senderName,
+                    message: message,
+                    timestamp: Date.now()
+                });
+                input.value = '';
+
+                // Logik integrasi AI Chat
+                if (message.toLowerCase().includes('@ai')) {
+                    const userQuery = message.replace(/@ai/gi, '').trim() || "Sila berikan status sistem semasa.";
+                    const apiKey = ""; // API Key disuntik oleh persekitaran eksekusi
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+                    const payload = {
+                        contents: [{ parts: [{ text: userQuery }] }],
+                        systemInstruction: { parts: [{ text: "Anda adalah sistem A.I asisten untuk klan SRTEAM ESPORT. Jawab pertanyaan member dengan gaya bahasa gamer yang santai, asik, cool (menggunakan kata sapaan seperti bro, geng, dsb), namun tetap informatif dan berjiwa e-sport/taktikal. Jangan terlalu kaku. Anda digalakkan mengguna loghat/bahasa rojak Melayu campur sikit gaya gaming." }] }
+                    };
+
+                    let aiResponseText = "Sistem AI sedang offline. Komunikasi terputus.";
+                    let delay = 1000;
+                    
+                    // Exponential backoff retry (hingga 5 kali)
+                    for (let i = 0; i < 5; i++) {
+                        try {
+                            const response = await fetch(url, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(payload)
+                            });
+                            if (response.ok) {
+                                const result = await response.json();
+                                aiResponseText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Mesej kosong dari pelayan pusat.";
+                                break;
+                            } else {
+                                throw new Error('Ralat Pelayan API');
+                            }
+                        } catch (apiErr) {
+                            if (i === 4) {
+                                console.error("API AI gagal selepas percubaan maksimum.");
+                            } else {
+                                await new Promise(res => setTimeout(res, delay));
+                                delay *= 2;
+                            }
+                        }
+                    }
+
+                    // Hantar balasan AI ke Firebase
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats'), {
+                        sender: "A.I SYSTEM",
+                        message: aiResponseText,
+                        timestamp: Date.now()
+                    });
+                }
+
+            } catch (err) { window.showAlert("Mesej gagal dihantar.", "error"); }
+        }
+
+        window.showAlert = function(message, type = 'info') {
+            const alertBox = document.getElementById('alert-box');
+            const alertMsg = document.getElementById('alert-message');
+            alertBox.classList.remove('hidden', 'bg-red-900/20', 'border-red-500', 'text-red-500', 'bg-green-900/20', 'border-green-500', 'text-green-500', 'bg-yellow-900/20', 'border-yellow-500', 'text-yellow-500');
+            
+            if (type === 'error') {
+                alertBox.classList.add('bg-red-900/20', 'border-red-500', 'text-red-500');
+                alertMsg.innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> ERROR: ${message}`;
+            } else if (type === 'success') {
+                alertBox.classList.add('bg-green-900/20', 'border-green-500', 'text-green-500');
+                alertMsg.innerHTML = `<i class="fa-solid fa-circle-check mr-2"></i> BERJAYA: ${message}`;
+            } else if (type === 'warning') {
+                alertBox.classList.add('bg-yellow-900/20', 'border-yellow-500', 'text-yellow-500');
+                alertMsg.innerHTML = `<i class="fa-solid fa-circle-exclamation mr-2"></i> PERHATIAN: ${message}`;
+            }
+            setTimeout(window.hideAlert, 5000);
+        }
+
+        window.hideAlert = function() { document.getElementById('alert-box').classList.add('hidden'); }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
