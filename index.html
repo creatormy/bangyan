@@ -1533,7 +1533,8 @@
                 const avatarImgList = user.photoURL ? `<img src="${user.photoURL}" class="w-8 h-8 rounded-full object-cover inline-block border border-tactical-green/50 shrink-0 cursor-pointer hover:opacity-80 transition" onclick="navigateTo('profile', '${user.email}')" title="Lihat Profil">` : `<div onclick="navigateTo('profile', '${user.email}')" class="w-8 h-8 rounded-full bg-tactical-panel border border-tactical-border text-xs flex items-center justify-center shrink-0 cursor-pointer hover:bg-tactical-green hover:text-black transition" title="Lihat Profil"><i class="fa-solid fa-user"></i></div>`;
                 const verifiedIconList = getVerifiedBadge(user);
 
-                let actionButtons = '<div class="flex flex-wrap justify-end gap-1.5">';
+                // DIBAIKI: Tambah w-max ml-auto untuk paksa butang tersusun cantik secara mendatar/petak
+                let actionButtons = '<div class="flex flex-wrap justify-end gap-1.5 w-max ml-auto">';
                 
                 if (user.status === 'pending') {
                     actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-800 hover:bg-green-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Lulus"><i class="fa-solid fa-check"></i></button>`;
@@ -1584,9 +1585,9 @@
                         <td class="p-3 text-white align-middle">
                             <div class="flex items-center gap-3">
                                 ${avatarImgList}
-                                <div class="flex flex-col">
-                                    <span class="flex items-center gap-1">
-                                        <a onclick="navigateTo('profile', '${user.email}')" class="cursor-pointer hover:text-tactical-green hover:underline transition font-bold text-xs sm:text-sm">
+                                <div class="flex flex-col min-w-0">
+                                    <span class="flex items-center gap-1 flex-wrap">
+                                        <a onclick="navigateTo('profile', '${user.email}')" class="cursor-pointer hover:text-tactical-green hover:underline transition font-bold text-xs sm:text-sm break-all">
                                             ${user.nickname || user.email}
                                         </a>
                                         ${verifiedIconList}
@@ -1612,7 +1613,8 @@
                 const verifiedIcon = getVerifiedBadge(tourUser);
                 const roleBadge = window.getSmallRoleBadge(tourUser);
 
-                let tourActions = '<div class="flex flex-wrap justify-end gap-1.5">';
+                // DIBAIKI: Tambah w-max ml-auto untuk paksa butang tersusun cantik
+                let tourActions = '<div class="flex flex-wrap justify-end gap-1.5 w-max ml-auto">';
                 if (tour.status === 'pending') {
                     tourActions += `<button onclick="updateTourStatus('${tour.id}', 'approved')" class="bg-green-800 hover:bg-green-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Luluskan"><i class="fa-solid fa-check"></i></button>`;
                     tourActions += `<button onclick="updateTourStatus('${tour.id}', 'rejected')" class="bg-red-800 hover:bg-red-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Tolak"><i class="fa-solid fa-xmark"></i></button>`;
