@@ -1514,7 +1514,8 @@
                 } else {
                     if (isSuperAdmin || currentUser.role === 'komander') {
                         if (user.role === 'user') {
-                            const verifyBtnIcon = user.verified ? '<i class="fa-solid fa-certificate"></i>' : '<i class="fa-solid fa-certificate"></i>';
+                            // UBAH: Ikon Blue Tick sebenar
+                            const verifyBtnIcon = user.verified ? '<i class="fa-solid fa-circle-xmark"></i>' : '<i class="fa-solid fa-circle-check"></i>';
                             const verifyBtnColor = user.verified ? 'bg-gray-700 hover:bg-gray-600 text-gray-400' : 'bg-blue-600 hover:bg-blue-500 text-white';
                             const verifyTitle = user.verified ? 'Buang Blue Tick' : 'Beri Blue Tick';
                             actionButtons += `<button onclick="toggleVerifyStatus('${user.id}', ${!!user.verified})" class="${verifyBtnColor} w-7 h-7 rounded flex items-center justify-center transition shadow-md" title="${verifyTitle}">${verifyBtnIcon}</button>`;
@@ -1523,17 +1524,17 @@
 
                     if (isSuperAdmin) {
                         if (user.role === 'user') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Admin"><i class="fa-solid fa-shield"></i></button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Admin"><i class="fa-solid fa-user-shield"></i></button>`;
                             actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Komander"><i class="fa-solid fa-star"></i></button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'moderator')" class="bg-purple-800 hover:bg-purple-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Moderator"><i class="fa-solid fa-eye"></i></button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'moderator')" class="bg-purple-800 hover:bg-purple-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Moderator"><i class="fa-solid fa-user-gear"></i></button>`;
                         } else if (user.role === 'admin') {
                             actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Komander"><i class="fa-solid fa-star"></i></button>`;
                             actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
                         } else if (user.role === 'komander') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Admin"><i class="fa-solid fa-shield"></i></button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Admin"><i class="fa-solid fa-user-shield"></i></button>`;
                             actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
                         } else if (user.role === 'moderator') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Admin"><i class="fa-solid fa-shield"></i></button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Admin"><i class="fa-solid fa-user-shield"></i></button>`;
                             actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Jadikan Komander"><i class="fa-solid fa-star"></i></button>`;
                             actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-7 h-7 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
                         }
