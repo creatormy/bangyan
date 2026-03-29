@@ -146,7 +146,10 @@
                         
                         <div class="p-3 border-b border-tactical-border flex justify-between items-center bg-tactical-dark rounded-t relative z-10">
                             <h4 class="text-white font-bold text-sm tracking-widest"><i class="fa-solid fa-bell text-tactical-green mr-2"></i> NOTIFIKASI</h4>
-                            <button onclick="markAllNotifRead()" class="text-[10px] text-tactical-text hover:text-white transition bg-tactical-panel px-2 py-1 rounded border border-tactical-border hover:border-tactical-green">Tandai Dibaca</button>
+                            <div class="flex gap-2">
+                                <button onclick="markAllNotifRead()" class="text-[10px] text-tactical-text hover:text-white transition bg-tactical-panel px-2 py-1 rounded border border-tactical-border hover:border-tactical-green">Tandai Dibaca</button>
+                                <button onclick="clearAllNotifications()" class="text-[10px] text-red-500 hover:text-white transition bg-red-900/20 px-2 py-1 rounded border border-red-900/50 hover:bg-red-600">Bersihkan</button>
+                            </div>
                         </div>
                         <div id="notif-list" class="flex-grow overflow-y-auto p-2 space-y-1 relative z-10 bg-transparent">
                             <!-- Akan diisi oleh JavaScript -->
@@ -174,6 +177,17 @@
                 <i class="fa-solid fa-medal text-yellow-500 mr-1"></i> <b class="text-white">Anggota Biasa:</b> Anda juga boleh dianugerahkan lencana ini secara manual melalui penilaian kemahiran dan sumbangan kepada klan!
             </div>
             <button onclick="toggleVerifiedInfo()" class="btn-tactical w-full py-3 rounded tracking-widest">FAHAM, KOMANDAN!</button>
+        </div>
+    </div>
+
+    <!-- Modal Pemapar Imej Profil -->
+    <div id="image-viewer-modal" class="hidden fixed inset-0 bg-black/95 z-[200] flex flex-col items-center justify-center p-4 backdrop-blur-md transition-opacity">
+        <div class="w-full max-w-3xl flex justify-end mb-4">
+            <button onclick="closeImageViewer()" class="text-tactical-text hover:text-white transition bg-tactical-dark border border-tactical-border rounded-full w-10 h-10 flex items-center justify-center shadow-lg hover:shadow-tactical-green/50 hover:border-tactical-green"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <img id="viewer-image" src="" alt="Profil Full" class="max-w-full max-h-[70vh] object-contain rounded border-2 border-tactical-green shadow-[0_0_30px_rgba(74,222,128,0.2)]">
+        <div class="mt-8">
+            <a id="viewer-download-btn" href="#" download="Profile_Picture.jpg" class="btn-tactical py-3 px-6 rounded inline-flex items-center gap-2 font-bold tracking-widest"><i class="fa-solid fa-download"></i> MUAT TURUN GAMBAR</a>
         </div>
     </div>
 
@@ -1036,9 +1050,15 @@
                 if (displayUser.photoURL) {
                     avatarContainer.style.backgroundImage = `url(${displayUser.photoURL})`;
                     defaultIcon.style.display = 'none';
+                    avatarContainer.classList.add('cursor-pointer');
+                    avatarContainer.setAttribute('onclick', `openImageViewer('${displayUser.photoURL}', '${displayUser.nickname || displayUser.email.split('@')[0]}')`);
+                    avatarContainer.title = "Klik untuk lihat saiz penuh";
                 } else {
                     avatarContainer.style.backgroundImage = 'none';
                     defaultIcon.style.display = 'block';
+                    avatarContainer.classList.remove('cursor-pointer');
+                    avatarContainer.removeAttribute('onclick');
+                    avatarContainer.title = "";
                 }
 
                 const verifiedBadge = document.getElementById('profile-verified-badge');
