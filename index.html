@@ -1581,7 +1581,7 @@
                 userHtml += `
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
                         <td class="p-3 text-[10px] sm:text-xs font-mono leading-tight whitespace-nowrap align-middle">${dateDisplay}</td>
-                        <td class="p-3 text-white flex items-center py-4 min-w-[150px]">
+                        <td class="p-3 text-white align-middle">
                             <div class="flex items-center gap-3">
                                 ${avatarImgList}
                                 <div class="flex flex-col">
@@ -1595,7 +1595,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td class="p-3 text-right align-middle min-w-[130px]">${actionButtons}</td>
+                        <td class="p-3 text-right align-middle">${actionButtons}</td>
                     </tr>
                 `;
             });
@@ -1623,11 +1623,13 @@
 
                 tourHtml += `
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
-                        <td class="p-3 text-white">${timeDate}</td>
-                        <td class="p-3 text-tactical-green font-bold flex items-center gap-1">${dynamicName} ${verifiedIcon} ${roleBadge}</td>
-                        <td class="p-3 text-white">${tourUser ? (tourUser.phone || tour.whatsapp) : tour.whatsapp}</td>
-                        <td class="p-3 font-bold ${sColor}">${tour.status.toUpperCase()}</td>
-                        <td class="p-3 text-right min-w-[100px]">${tourActions}</td>
+                        <td class="p-3 text-white whitespace-nowrap align-middle">${timeDate}</td>
+                        <td class="p-3 text-tactical-green font-bold align-middle">
+                            <div class="flex items-center gap-1">${dynamicName} ${verifiedIcon} ${roleBadge}</div>
+                        </td>
+                        <td class="p-3 text-white whitespace-nowrap align-middle">${tourUser ? (tourUser.phone || tour.whatsapp) : tour.whatsapp}</td>
+                        <td class="p-3 font-bold ${sColor} whitespace-nowrap align-middle">${tour.status.toUpperCase()}</td>
+                        <td class="p-3 text-right align-middle">${tourActions}</td>
                     </tr>
                 `;
             });
