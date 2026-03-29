@@ -2003,14 +2003,14 @@
                 });
                 input.value = '';
                 
-                // HANTAR NOTIFIKASI JIKA ADA MENTION (@Nickname)
-                users.forEach(u => {
-                    if (u.id === currentUser.id) return;
+                // HANTAR NOTIFIKASI JIKA ADA MENTION (@Nickname) - DIBAIKI
+                for (const u of users) {
+                    if (u.id === currentUser.id) continue;
                     const uNick = (u.nickname || u.email.split('@')[0]).toUpperCase();
                     if (message.toUpperCase().includes(`@${uNick}`)) {
-                        window.sendNotification(u.id, `${senderName} telah mention anda di Basecamp Chat.`, "mention", "chat");
+                        await window.sendNotification(u.id, `${senderName} telah mention anda di Basecamp Chat.`, "mention", "chat");
                     }
-                });
+                }
                 
             } catch (err) { window.showAlert("Mesej gagal dihantar.", "error"); }
         }
