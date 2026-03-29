@@ -1547,7 +1547,7 @@
 
                 userHtml += `
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
-                        <td class="p-3 text-xs font-mono leading-tight">${dateDisplay}</td>
+                        <td class="p-3 text-xs font-mono leading-tight whitespace-nowrap">${dateDisplay}</td>
                         <td class="p-3 text-white flex items-center py-5 min-w-[200px]">
                             ${avatarImgList}
                             <a onclick="navigateTo('profile', '${user.email}')" class="cursor-pointer hover:text-tactical-green hover:underline transition flex items-center gap-1">
@@ -1555,14 +1555,11 @@
                             </a>
                             ${verifiedIconList}
                         </td>
-                        <td class="p-3 text-tactical-green">${user.phone || '-'}</td>
-                        <td class="p-3">${roleBadge}</td>
-                        <td class="p-3 font-bold ${statusColor}">${user.status.toUpperCase()}</td>
-                        <td class="p-3 text-right max-w-[250px] min-w-[150px]">${actionButtons}</td>
+                        <td class="p-3 text-right min-w-[150px]">${actionButtons}</td>
                     </tr>
                 `;
             });
-            if (userList) userList.innerHTML = userHtml === '' ? `<tr><td colspan="6" class="p-4 text-center text-tactical-text">Tiada rekod member.</td></tr>` : userHtml;
+            if (userList) userList.innerHTML = userHtml === '' ? `<tr><td colspan="3" class="p-4 text-center text-tactical-text">Tiada rekod member.</td></tr>` : userHtml;
 
             let tourHtml = '';
             tournaments.forEach((tour) => {
