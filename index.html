@@ -1625,10 +1625,34 @@
 
         window.setRole = async function(id, role) {
             try { 
+                const targetUser = users.find(u => u.id === id);
+                if (!targetUser) return;
+
+                // Definisi Level Pangkat
+                const rankValues = { 'superadmin': 5, 'admin': 4, 'moderator': 3, 'komander': 2, 'user': 1 };
+                const roleNames = { 'superadmin': 'SUPER ADMIN', 'admin': 'ADMIN', 'moderator': 'MODERATOR', 'komander': 'KOMANDER', 'user': 'MEMBER BIASA' };
+
+                const oldRank = rankValues[targetUser.role || 'user'] || 1;
+                const newRank = rankValues[role] || 1;
+                const roleNameDisplay = roleNames[role] || 'MEMBER BIASA';
+
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { role: role }); 
-                let roleName = role === 'admin' ? 'ADMIN' : (role === 'komander' ? 'KOMANDER' : 'MEMBER BIASA');
-                window.sendNotification(id, `Tahniah! Pangkat anda telah dinaik taraf kepada ${roleName}.`, "role", "profile");
-            } catch (err) { }
+                
+                let notifMsg = "";
+                let notifType = "role"; // Default icon (Shield)
+
+                // Cek Naik atau Turun Pangkat
+                if (newRank > oldRank) {
+                    notifMsg = `Tahniah! Pangkat anda telah dinaik taraf kepada ${roleNameDisplay}.`;
+                } else if (newRank < oldRank) {
+                    notifMsg = `Perhatian: Pangkat anda telah diturunkan kepada ${roleNameDisplay} atas arahan Command Center.`;
+                    notifType = "rejected"; // Ikon amaran merah/pangkah
+                } else {
+                    notifMsg = `Pangkat anda telah dikemas kini kepada ${roleNameDisplay}.`;
+                }
+
+                await window.sendNotification(id, notifMsg, notifType, "profile");
+            } catch (err) { console.error(err); }
         }
         
         window.openEditAdminModal = function(id) {
@@ -1888,7 +1912,7 @@
             let html = '';
             
             const today = new Date().toLocaleDateString('ms-MY');
-            const isAuthorizedToDelete = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander');
+            const isAuthorizedToDelete = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander' || currentUser.role === 'moderator');
 
             chats.forEach(chat => {
                 let timeValue = Date.now();
