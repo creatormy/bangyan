@@ -705,8 +705,32 @@
         function getVerifiedBadge(user) {
             if (!user) return '';
             const isVerified = (user.role === 'superadmin' || user.role === 'admin' || user.role === 'komander' || user.verified);
-            return isVerified ? `<i class="fa-solid fa-circle-check text-blue-500 ml-1 drop-shadow-[0_0_5px_rgba(59,130,246,0.6)] cursor-pointer hover:scale-110 transition" onclick="event.stopPropagation(); toggleVerifiedInfo()" title="Klik untuk info pengesahan"></i>` : '';
+            // Tiada lagi aksi klik di sini untuk halaman umum. Klik hanya pada halaman Profil.
+            return isVerified ? `<i class="fa-solid fa-circle-check text-blue-500 ml-1 drop-shadow-[0_0_5px_rgba(59,130,246,0.6)]" title="Akaun Disahkan"></i>` : '';
         }
+
+        // Pengurusan URL & Memori Halaman
+        window.handleRoute = function() {
+            const hash = window.location.hash.substring(1);
+            if (!hash) {
+                window.navigateTo('home', null, false);
+                return;
+            }
+            const parts = hash.split('?id=');
+            const vId = parts[0];
+            const target = parts[1] ? decodeURIComponent(parts[1]) : null;
+
+            const link = navLinks.find(l => l.id === vId);
+            const reqAuth = link ? link.reqAuth : (vId === 'admin' || vId === 'profile');
+
+            if (reqAuth && (!currentUser || currentUser.status !== 'approved')) {
+                window.navigateTo('login', null, false);
+            } else {
+                window.navigateTo(vId, target, false);
+            }
+        };
+
+        window.addEventListener('hashchange', window.handleRoute);
 
         const navLinks = [
             { id: 'profile', label: 'PROFIL', icon: 'fa-user-astronaut', reqAuth: true },
@@ -737,7 +761,7 @@
                 window.showAlert("Gagal menyambung ke pangkalan data. Sila pastikan Authentication (Anonymous) telah diaktifkan.", "error");
             }
 
-            window.navigateTo('home');
+            window.handleRoute(); // Automatik baca URL semasa muat halaman
         }
 
         function setupFirestoreListeners() {
@@ -771,12 +795,10 @@
                         }
                         
                         window.updateNavigation();
-                        const profileView = document.getElementById('view-profile');
-                        if(profileView && !profileView.classList.contains('hidden')) {
-                            window.navigateTo('profile');
-                        }
                     }
                 }
+                // Refresh data/paparan pada URL semasa bila database update
+                window.handleRoute(); 
             });
 
             const chatRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats');
@@ -901,7 +923,18 @@
             }
         }
 
-        window.navigateTo = function(viewId, targetEmail = null) {
+        window.navigateTo = function(viewId, targetEmail = null, updateHash = true) {
+            if (updateHash) {
+                let hashStr = viewId;
+                if (targetEmail && viewId === 'profile') {
+                    hashStr += '?id=' + encodeURIComponent(targetEmail);
+                }
+                // Elak berlakunya pusingan berulang hashchange
+                if (window.location.hash !== '#' + hashStr) {
+                    window.history.pushState(null, '', '#' + hashStr);
+                }
+            }
+
             document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
             
             const mobileMenuElement = document.getElementById('mobile-menu');
@@ -1760,6 +1793,7 @@
             let html = '';
             
             const today = new Date().toLocaleDateString('ms-MY');
+            const isAuthorizedToDelete = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander');
 
             chats.forEach(chat => {
                 let timeValue = Date.now();
@@ -1789,6 +1823,7 @@
                 
                 const verifiedIcon = getVerifiedBadge(chatUser);
                 const clickableNameTag = chatUser ? `<a onclick="navigateTo('profile', '${chatUser.email}')" class="cursor-pointer hover:underline">${currentName}</a>` : currentName;
+                const deleteBtnHtml = isAuthorizedToDelete ? `<i class="fa-solid fa-trash text-red-500/70 hover:text-red-500 cursor-pointer ml-2 hover:scale-110 transition" onclick="deleteChat('${chat.id}')" title="Padam Chat Ini"></i>` : '';
 
                 const displayMessage = window.formatChatMessage(chat.message, false);
                 
@@ -1802,7 +1837,7 @@
                             </div>
                             <div class="bg-tactical-greenDark text-white px-4 py-2 rounded-2xl rounded-tr-sm shadow-md border border-tactical-green/30 text-left">
                                 <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans break-words">${displayMessage}</div>
-                                <div class="text-[9px] text-green-200/70 text-right mt-1 font-mono tracking-tighter">${displayTime} <i class="fa-solid fa-check-double text-[8px] ml-1"></i></div>
+                                <div class="text-[9px] text-green-200/70 text-right mt-1 font-mono tracking-tighter">${displayTime} <i class="fa-solid fa-check-double text-[8px] ml-1"></i> ${deleteBtnHtml}</div>
                             </div>
                         </div>`;
                 } else if (chat.sender === "A.I SYSTEM") {
@@ -1815,7 +1850,7 @@
                             </div>
                             <div class="bg-blue-900/40 text-blue-50 px-4 py-2 rounded-2xl rounded-tl-sm shadow-md border border-blue-800/50 backdrop-blur-sm text-left">
                                 <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans break-words">${displayMessage}</div>
-                                <div class="text-[9px] text-blue-300/70 text-right mt-1 font-mono tracking-tighter">${displayTime}</div>
+                                <div class="text-[9px] text-blue-300/70 text-right mt-1 font-mono tracking-tighter">${displayTime} ${deleteBtnHtml}</div>
                             </div>
                         </div>`;
                 } else {
@@ -1828,7 +1863,7 @@
                             </div>
                             <div class="bg-tactical-panel text-gray-200 px-4 py-2 rounded-2xl rounded-tl-sm shadow-md border border-tactical-border/50 text-left">
                                 <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans break-words">${displayMessage}</div>
-                                <div class="text-[9px] text-gray-500 text-right mt-1 font-mono tracking-tighter">${displayTime}</div>
+                                <div class="text-[9px] text-gray-500 text-right mt-1 font-mono tracking-tighter">${displayTime} ${deleteBtnHtml}</div>
                             </div>
                         </div>`;
                 }
@@ -1870,6 +1905,18 @@
                 
             } catch (err) { window.showAlert("Mesej gagal dihantar.", "error"); }
         }
+
+        window.deleteChat = async function(id) {
+            if(confirm('Adakah anda pasti mahu memadam mesej ini dari sistem?')) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_chats', id));
+                    window.showAlert('Mesej berjaya dipadam.', 'success');
+                } catch (err) {
+                    console.error(err);
+                    window.showAlert('Gagal memadam mesej.', 'error');
+                }
+            }
+        };
 
         window.showAlert = function(message, type = 'info') {
             const alertBox = document.getElementById('alert-box');
