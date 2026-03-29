@@ -299,84 +299,80 @@
         <section id="view-clan" class="view-section hidden">
             <h2 class="text-3xl font-bold text-white mb-6 border-b border-tactical-border pb-2 uppercase"><i class="fa-solid fa-network-wired text-tactical-green mr-2"></i> DOSIER SEJARAH SRTEAM</h2>
             
-            <div class="grid lg:grid-cols-3 gap-6">
-                <!-- Sejarah Operasi (Timeline) -->
-                <div class="lg:col-span-2 space-y-4">
-                    <div class="panel-tactical p-6 rounded relative border-l-4 border-l-gray-600">
-                        <div class="absolute -left-3 top-6 w-5 h-5 bg-gray-600 rounded-full border-4 border-tactical-dark"></div>
-                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-flask text-gray-400 mr-2"></i> Fasa 1: "Smart Research Team" (2019)</h3>
-                        <p class="text-tactical-text font-mono text-sm leading-relaxed mb-2">
-                            SRTEAM mula ditubuhkan pada era Perintah Kawalan Pergerakan (PKP) bermula di medan PUBG Mobile. Pada asalnya, kami dikenali sebagai skuad yang bereksperimen dengan pelbagai kaedah (termasuk *cheats*) untuk menguasai perlawanan—mengukuhkan nama "Research" dalam identiti awal kami.
-                        </p>
-                    </div>
+            <!-- Tempat paparan info klan dinamis -->
+            <div id="clan-content-container">
+                <!-- Akan diisi oleh JavaScript renderClanInfo -->
+            </div>
 
-                    <div class="panel-tactical p-6 rounded relative border-l-4 border-l-blue-600">
-                        <div class="absolute -left-3 top-6 w-5 h-5 bg-blue-600 rounded-full border-4 border-tactical-dark"></div>
-                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-rotate text-blue-400 mr-2"></i> Fasa 2: Era Transformasi "Seruan Team"</h3>
-                        <p class="text-tactical-text font-mono text-sm leading-relaxed mb-2">
-                            Pelancaran PUBG: New State Global menjadi titik perubahan. Kami meninggalkan gelaran "squad cheater" dan berevolusi menjadi klan profesional sepenuhnya di bawah nama **Seruan Team**—membawa maksud panggilan untuk berjuang secara bersih dan teratur. Kami terus melebarkan sayap kompetitif ke dalam Apex Legends Mobile dan menyertai pelbagai kejohanan.
-                        </p>
-                    </div>
-
-                    <div class="panel-tactical p-6 rounded relative border-l-4 border-l-tactical-green">
-                        <div class="absolute -left-3 top-6 w-5 h-5 bg-tactical-green rounded-full border-4 border-tactical-dark shadow-[0_0_10px_#4ade80]"></div>
-                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-rocket text-tactical-green mr-2"></i> Fasa 3: Kebangkitan "Spectral Rangers" (2025)</h3>
-                        <p class="text-tactical-text font-mono text-sm leading-relaxed mb-4">
-                            Selepas penutupan New State dan Apex Mobile, SRTEAM berundur seketika ke dalam bayang-bayang. Tahun 2025, dengan kehadiran **Delta Force Mobile**, kami bangkit semula secara rasmi sebagai **Spectral Rangers Team**.
-                        </p>
-                        
-                        <div class="bg-tactical-dark p-4 rounded border border-tactical-border font-mono text-xs text-tactical-text space-y-3">
-                            <p><strong class="text-white">SPECTRAL:</strong> Sesuatu yang bayangan, halimunan, atau dimensi lain. Mencerminkan strategi sulit dan pergerakan senyap di medan perang.</p>
-                            <p><strong class="text-white">RANGERS:</strong> Simbol unit khas yang bergerak pantas dan mahir dalam pelbagai medan (pasukan elit penyusup).</p>
-                            <p><strong class="text-white">TEAM:</strong> Kekuatan dalam kebersamaan — satu pasukan, satu perjuangan.</p>
-                        </div>
+            <!-- Borang Edit Info Klan (Admin/Superadmin) -->
+            <div id="clan-edit-form" class="hidden panel-tactical p-6 rounded mt-6 border-t-4 border-t-tactical-green shadow-2xl">
+                <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-pen"></i> KEMASKINI MAKLUMAT KLAN</h3>
+                <form onsubmit="saveClanInfo(event)">
+                    <h4 class="text-tactical-green font-bold text-sm mb-2 mt-4">1. Identiti Pangkalan</h4>
+                    <div class="grid md:grid-cols-2 gap-4 mb-4">
+                        <input type="text" id="edit-clan-name" class="input-tactical p-2 rounded text-xs" placeholder="Nama Klan">
+                        <input type="text" id="edit-clan-tag" class="input-tactical p-2 rounded text-xs" placeholder="Tag Klan">
+                        <input type="text" id="edit-clan-year" class="input-tactical p-2 rounded text-xs" placeholder="Tahun Asas">
+                        <input type="text" id="edit-clan-founder" class="input-tactical p-2 rounded text-xs" placeholder="Pengasas">
+                        <input type="text" id="edit-clan-status" class="input-tactical p-2 rounded text-xs" placeholder="Status Operasi">
                     </div>
                     
-                    <div class="panel-tactical p-6 rounded mt-4 text-center border border-tactical-green bg-tactical-greenDark/10">
-                        <p class="text-tactical-green font-bold text-sm tracking-widest uppercase">
-                            "Bukan sekadar nama, ia adalah legasi. Dari zaman gelap ke profesionalisme, dari bayang-bayang ke pentas kebangkitan."
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Statistik & Identiti -->
-                <div class="space-y-6">
-                    <div class="panel-tactical p-6 rounded">
-                        <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-fingerprint text-tactical-green mr-2"></i> Identiti Pangkalan</h3>
-                        <ul class="space-y-4 font-mono text-sm">
-                            <li class="flex flex-col border-b border-tactical-border pb-2">
-                                <span class="text-tactical-text text-xs mb-1">NAMA RASMI KLAN</span>
-                                <span class="text-white font-bold text-base">SPECTRAL RANGERS TEAM</span>
-                            </li>
-                            <li class="flex justify-between border-b border-tactical-border pb-2">
-                                <span class="text-tactical-text">TAG PANGKALAN</span>
-                                <span class="text-tactical-green font-bold text-lg">[SR]</span>
-                            </li>
-                            <li class="flex justify-between border-b border-tactical-border pb-2">
-                                <span class="text-tactical-text">TAHUN ASAS</span>
-                                <span class="text-white font-bold">2019</span>
-                            </li>
-                            <li class="flex justify-between border-b border-tactical-border pb-2">
-                                <span class="text-tactical-text">KAPTEN / PENGASAS</span>
-                                <span class="text-white font-bold">BangYan</span>
-                            </li>
-                            <li class="flex justify-between">
-                                <span class="text-tactical-text">STATUS OPERASI</span>
-                                <span class="text-green-500 font-bold animate-pulse">AKTIF (2025)</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <div class="panel-tactical p-6 rounded">
-                        <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-gamepad text-tactical-green mr-2"></i> Rekod Pertempuran</h3>
-                        <div class="flex flex-wrap gap-2 font-mono text-xs">
-                            <span class="bg-gray-800 text-gray-300 px-3 py-1 rounded border border-gray-600">PUBG Mobile</span>
-                            <span class="bg-blue-900 text-blue-300 px-3 py-1 rounded border border-blue-600">PUBG: New State</span>
-                            <span class="bg-red-900 text-red-300 px-3 py-1 rounded border border-red-600">Apex Legends Mobile</span>
-                            <span class="bg-tactical-greenDark text-tactical-green px-3 py-1 rounded border border-tactical-green font-bold">Delta Force Mobile</span>
+                    <h4 class="text-tactical-green font-bold text-sm mb-2 mt-4">2. Senarai Pangkat Utama</h4>
+                    <div class="grid md:grid-cols-3 gap-4 mb-4">
+                        <div>
+                            <label class="text-[10px] text-tactical-text font-bold text-yellow-500">KOMANDER KLAN</label>
+                            <input type="text" id="edit-clan-komander" class="input-tactical w-full p-2 rounded text-xs" placeholder="Nama Komander">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-tactical-text font-bold text-blue-400">ADMIN / PEGAWAI</label>
+                            <input type="text" id="edit-clan-admin" class="input-tactical w-full p-2 rounded text-xs" placeholder="Nama Admin">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-tactical-text font-bold text-purple-400">MODERATOR</label>
+                            <input type="text" id="edit-clan-moderator" class="input-tactical w-full p-2 rounded text-xs" placeholder="Nama Moderator">
                         </div>
                     </div>
-                </div>
+
+                    <h4 class="text-tactical-green font-bold text-sm mb-2 mt-4">3. Rekod Permainan (Pisahkan dengan koma)</h4>
+                    <input type="text" id="edit-clan-games" class="input-tactical w-full p-2 rounded text-xs mb-4" placeholder="Cth: PUBG Mobile, Valorant, Apex">
+
+                    <h4 class="text-tactical-green font-bold text-sm mb-2 mt-4">4. Garis Masa / Sejarah (3 Fasa)</h4>
+                    <div class="mb-2 p-3 bg-tactical-dark rounded border border-tactical-border">
+                        <label class="text-xs text-tactical-text font-bold">FASA 1</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="edit-phase1-title" class="input-tactical flex-grow p-2 rounded text-xs" placeholder="Tajuk Fasa 1">
+                            <input type="color" id="edit-phase1-color" class="h-8 w-10 p-0 rounded border-0 cursor-pointer" title="Warna Tema">
+                            <input type="text" id="edit-phase1-icon" class="input-tactical w-24 p-2 rounded text-xs" placeholder="Ikon (Cth: fa-flask)">
+                        </div>
+                        <textarea id="edit-phase1-content" class="input-tactical w-full p-2 rounded text-xs" rows="2" placeholder="Kandungan Fasa 1"></textarea>
+                    </div>
+                    <div class="mb-2 p-3 bg-tactical-dark rounded border border-tactical-border">
+                        <label class="text-xs text-tactical-text font-bold">FASA 2</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="edit-phase2-title" class="input-tactical flex-grow p-2 rounded text-xs" placeholder="Tajuk Fasa 2">
+                            <input type="color" id="edit-phase2-color" class="h-8 w-10 p-0 rounded border-0 cursor-pointer">
+                            <input type="text" id="edit-phase2-icon" class="input-tactical w-24 p-2 rounded text-xs" placeholder="Ikon (Cth: fa-rotate)">
+                        </div>
+                        <textarea id="edit-phase2-content" class="input-tactical w-full p-2 rounded text-xs" rows="2" placeholder="Kandungan Fasa 2"></textarea>
+                    </div>
+                    <div class="mb-4 p-3 bg-tactical-dark rounded border border-tactical-border">
+                        <label class="text-xs text-tactical-text font-bold">FASA 3</label>
+                        <div class="flex gap-2 mb-2">
+                            <input type="text" id="edit-phase3-title" class="input-tactical flex-grow p-2 rounded text-xs" placeholder="Tajuk Fasa 3">
+                            <input type="color" id="edit-phase3-color" class="h-8 w-10 p-0 rounded border-0 cursor-pointer">
+                            <input type="text" id="edit-phase3-icon" class="input-tactical w-24 p-2 rounded text-xs" placeholder="Ikon (Cth: fa-rocket)">
+                        </div>
+                        <textarea id="edit-phase3-content" class="input-tactical w-full p-2 rounded text-xs" rows="2" placeholder="Kandungan Fasa 3"></textarea>
+                    </div>
+
+                    <h4 class="text-tactical-green font-bold text-sm mb-2 mt-4">5. Petikan Kata-kata (Quote)</h4>
+                    <input type="text" id="edit-clan-quote" class="input-tactical w-full p-2 rounded text-xs mb-6" placeholder="Petikan khas klan...">
+
+                    <div class="flex gap-2">
+                        <button type="submit" class="btn-tactical py-3 px-6 rounded flex-grow text-sm"><i class="fa-solid fa-floppy-disk mr-2"></i> SIMPAN PERUBAHAN</button>
+                        <button type="button" onclick="toggleEditClanInfo()" class="bg-tactical-dark text-white border border-tactical-border py-3 px-6 rounded hover:bg-tactical-panel transition text-sm">BATAL</button>
+                    </div>
+                </form>
             </div>
         </section>
 
@@ -619,7 +615,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-analytics.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         let firebaseConfig;
         let dbAppId = 'srteam-production'; // Direktori pangkalan data anda
@@ -650,11 +646,26 @@
         const appId = dbAppId; 
         let firebaseUser = null;
 
-        const ADMIN_CREDENTIALS = { email: 'bangyanasli', password: 'abgyan92', role: 'superadmin' };
         let users = [];
         let tournaments = [];
         let announcements = []; // Tetingkap memori untuk pengumuman misi
         
+        // Data lalai untuk Maklumat Klan
+        const defaultClanInfo = {
+            identity: {
+                name: "SPECTRAL RANGERS TEAM", tag: "[SR]", year: "2019", founder: "BangYan", status: "AKTIF (2026)",
+                komander: "Tiada Data", admin: "Tiada Data", moderator: "Tiada Data"
+            },
+            games: ["PUBG Mobile", "PUBG: New State", "Apex Legends Mobile", "Delta Force Mobile"],
+            quote: "Bukan sekadar nama, ia adalah legasi. Dari zaman gelap ke profesionalisme, dari bayang-bayang ke pentas kebangkitan.",
+            phases: [
+                { title: 'Fasa 1: "Smart Research Team" (2019)', content: 'SRTEAM mula ditubuhkan pada era Perintah Kawalan Pergerakan (PKP) bermula di medan PUBG Mobile. Pada asalnya, kami dikenali sebagai skuad yang bereksperimen dengan pelbagai kaedah (termasuk *cheats*) untuk menguasai perlawanan—mengukuhkan nama "Research" dalam identiti awal kami.', colorHex: '#4b5563', icon: 'fa-flask' },
+                { title: 'Fasa 2: Era Transformasi "Seruan Team"', content: 'Pelancaran PUBG: New State Global menjadi titik perubahan. Kami meninggalkan gelaran "squad cheater" dan berevolusi menjadi klan profesional sepenuhnya di bawah nama **Seruan Team**—membawa maksud panggilan untuk berjuang secara bersih dan teratur. Kami terus melebarkan sayap kompetitif ke dalam Apex Legends Mobile dan menyertai pelbagai kejohanan.', colorHex: '#2563eb', icon: 'fa-rotate' },
+                { title: 'Fasa 3: Kebangkitan "Spectral Rangers" (2025)', content: 'Selepas penutupan New State dan Apex Mobile, SRTEAM berundur seketika ke dalam bayang-bayang. Tahun 2025, dengan kehadiran **Delta Force Mobile**, kami bangkit semula secara rasmi sebagai **Spectral Rangers Team**.\n\nSPECTRAL: Sesuatu yang bayangan, halimunan.\nRANGERS: Simbol unit khas yang bergerak pantas.\nTEAM: Kekuatan dalam kebersamaan.', colorHex: '#4ade80', icon: 'fa-rocket' }
+            ]
+        };
+        let clanInfoData = defaultClanInfo;
+
         // TETAPAN BAHARU: Semak LocalStorage dahulu, kemudian SessionStorage
         let currentUser = JSON.parse(localStorage.getItem('srteam_session')) || JSON.parse(sessionStorage.getItem('srteam_session')) || null;
         let isLoginMode = true;
@@ -764,8 +775,22 @@
                 snapshot.forEach(doc => announcements.push({ id: doc.id, ...doc.data() }));
                 announcements.sort((a, b) => b.timestamp - a.timestamp); // Terbaru di atas
                 window.renderAnnouncements();
-                if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin')) {
+                if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin' || currentUser.role === 'komander')) {
                     window.renderAdminAnnouncements();
+                }
+            });
+
+            // Dengar Info Klan (Dinamik)
+            const clanInfoRef = doc(db, 'artifacts', appId, 'public', 'data', 'srteam_settings', 'clan_info');
+            onSnapshot(clanInfoRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    clanInfoData = docSnap.data();
+                } else {
+                    clanInfoData = defaultClanInfo;
+                }
+                const viewClan = document.getElementById('view-clan');
+                if (viewClan && !viewClan.classList.contains('hidden')) {
+                    window.renderClanInfo();
                 }
             });
         }
@@ -790,7 +815,7 @@
 
             if (currentUser) {
                 // Menjana butang kawalan khusus di Footer
-                if (currentUser.role === 'admin' || currentUser.role === 'superadmin') {
+                if (currentUser.role === 'admin' || currentUser.role === 'superadmin' || currentUser.role === 'komander') {
                     footerHtml += `
                         <button type="button" onclick="navigateTo('admin')" class="text-tactical-green hover:text-white font-bold text-[10px] md:text-xs tracking-wider uppercase transition flex flex-row items-center gap-1.5 md:gap-2 px-4 py-2 rounded bg-tactical-greenDark/20 border border-tactical-green shadow-[0_0_8px_rgba(74,222,128,0.2)]">
                             <i class="fa-solid fa-user-shield text-sm"></i> COMMAND CENTER
@@ -878,8 +903,9 @@
                 if (profileNickname) profileNickname.textContent = displayUser.nickname || displayUser.email.split('@')[0];
                 
                 let roleText = 'MEMBER';
-                if (displayUser.role === 'admin') roleText = 'KOMANDER (ADMIN)';
-                if (displayUser.role === 'superadmin') roleText = 'KAPTEN (SUPER ADMIN)';
+                if (displayUser.role === 'admin') roleText = 'ADMIN / PEGAWAI';
+                if (displayUser.role === 'komander') roleText = 'KAPTEN KLAN (KOMANDER)';
+                if (displayUser.role === 'superadmin') roleText = 'PENGASAS (SUPER ADMIN)';
                 
                 const profileRole = document.getElementById('profile-role');
                 if (profileRole) profileRole.textContent = `PERANAN: ${roleText}`;
@@ -924,6 +950,9 @@
             if (viewId === 'tournament') {
                 window.renderApprovedTournaments();
                 window.renderAnnouncements();
+            }
+            if (viewId === 'clan') {
+                window.renderClanInfo();
             }
             window.hideAlert();
         }
@@ -1018,63 +1047,31 @@
 
             try {
                 if (isLoginMode) {
-                    // Bypass / Setup untuk Super Admin BangYan
-                    if (emailOrPhone === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
-                        let saUser = users.find(u => u.email === ADMIN_CREDENTIALS.email);
-                        
-                        if (!saUser && firebaseUser) {
-                            try {
-                                const docRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_users'), {
-                                    email: ADMIN_CREDENTIALS.email,
-                                    password: ADMIN_CREDENTIALS.password,
-                                    status: 'approved',
-                                    role: 'superadmin',
-                                    nickname: 'BangYan',
-                                    phone: '',
-                                    createdAt: Date.now()
-                                });
-                                saUser = { id: docRef.id, email: ADMIN_CREDENTIALS.email, role: 'superadmin', status: 'approved', nickname: 'BangYan', phone: '' };
-                            } catch(err) { console.error("Gagal cipta admin:", err); }
-                        }
-
-                        currentUser = saUser || { id: 'superadmin_id', email: ADMIN_CREDENTIALS.email, role: 'superadmin', status: 'approved', nickname: 'BangYan', phone: '' };
-                        
-                        if (rememberMe) {
-                            localStorage.setItem('srteam_session', JSON.stringify(currentUser));
+                    // Pengguna biasa & Admin menggunakan laluan log masuk yang sama
+                    const user = users.find(u => (u.email === emailOrPhone || u.phone === emailOrPhone) && u.password === password);
+                    if (user) {
+                        if (user.status === 'pending') {
+                            window.showAlert('Akses ditolak. Akaun sedang menunggu pengesahan Command Center.', 'warning');
+                        } else if (user.status === 'banned') {
+                            window.showAlert('AKSES DISEKAT: Akaun anda telah digantung oleh Komander.', 'error');
                         } else {
-                            sessionStorage.setItem('srteam_session', JSON.stringify(currentUser));
-                        }
-
-                        window.updateNavigation();
-                        window.navigateTo('home');
-                        window.showAlert(`Akses Kapten (Super Admin) Diberikan.`, 'success');
-                    } else {
-                        // Pengguna biasa
-                        const user = users.find(u => (u.email === emailOrPhone || u.phone === emailOrPhone) && u.password === password);
-                        if (user) {
-                            if (user.status === 'pending') {
-                                window.showAlert('Akses ditolak. Akaun sedang menunggu pengesahan Command Center.', 'warning');
-                            } else if (user.status === 'banned') {
-                                window.showAlert('AKSES DISEKAT: Akaun anda telah digantung oleh Komander.', 'error');
+                            currentUser = user;
+                            if (rememberMe) {
+                                localStorage.setItem('srteam_session', JSON.stringify(currentUser));
                             } else {
-                                currentUser = user;
-                                if (rememberMe) {
-                                    localStorage.setItem('srteam_session', JSON.stringify(currentUser));
-                                } else {
-                                    sessionStorage.setItem('srteam_session', JSON.stringify(currentUser));
-                                }
-                                window.updateNavigation();
-                                window.navigateTo('home');
-                                window.showAlert(`Selamat kembali ke pangkalan.`, 'success');
+                                sessionStorage.setItem('srteam_session', JSON.stringify(currentUser));
                             }
-                        } else {
-                            window.showAlert('Kredensial tidak sah atau belum mendaftar. (Pastikan Pangkalan Data Sedia)', 'error');
+                            window.updateNavigation();
+                            window.navigateTo('home');
+                            window.showAlert(`Selamat kembali ke pangkalan.`, 'success');
                         }
+                    } else {
+                        window.showAlert('Kredensial tidak sah atau belum mendaftar. (Pastikan Pangkalan Data Sedia)', 'error');
                     }
                 } else {
                     const regPhoneValue = document.getElementById('reg-phone').value.trim();
                     
-                    if (users.some(u => u.email === emailOrPhone || (u.phone && u.phone === regPhoneValue)) || emailOrPhone === ADMIN_CREDENTIALS.email) {
+                    if (users.some(u => u.email === emailOrPhone || (u.phone && u.phone === regPhoneValue))) {
                         window.showAlert('Emel atau Nombor ini telah digunakan di dalam pangkalan data.', 'error');
                         throw new Error('Duplicate');
                     }
@@ -1115,6 +1112,176 @@
             window.showAlert('Sesi ditamatkan. Anda telah log keluar.', 'success');
         }
 
+        // --- FUNGSI INFO KLAN DINAMIK ---
+        window.renderClanInfo = function() {
+            const container = document.getElementById('clan-content-container');
+            if (!container) return;
+            
+            const isAuthorized = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander');
+            const editBtnHtml = isAuthorized ? `<div class="flex justify-end mb-4"><button onclick="toggleEditClanInfo()" class="bg-tactical-greenDark text-white px-5 py-2 rounded hover:bg-tactical-green hover:text-black transition text-sm font-bold border border-tactical-green shadow-[0_0_10px_rgba(74,222,128,0.3)]"><i class="fa-solid fa-pen-to-square mr-2"></i> KEMASKINI INFO KLAN</button></div>` : '';
+
+            // Generate Tags Permainan
+            const gamesHtml = (clanInfoData.games || []).map((g, i) => {
+                const colors = ['bg-gray-800 border-gray-600 text-gray-300', 'bg-blue-900 border-blue-600 text-blue-300', 'bg-red-900 border-red-600 text-red-300', 'bg-tactical-greenDark border-tactical-green text-tactical-green font-bold', 'bg-purple-900 border-purple-600 text-purple-300', 'bg-yellow-900 border-yellow-600 text-yellow-300'];
+                const colorClass = colors[i % colors.length];
+                return `<span class="${colorClass} px-3 py-1 rounded border">${g}</span>`;
+            }).join('');
+
+            let html = `
+                ${editBtnHtml}
+                <div class="grid lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-4">
+                        ${(clanInfoData.phases || []).map((p) => `
+                            <div class="panel-tactical p-6 rounded relative border-l-4" style="border-left-color: ${p.colorHex || '#4ade80'}">
+                                <div class="absolute -left-3 top-6 w-5 h-5 rounded-full border-4 border-tactical-dark shadow-lg" style="background-color: ${p.colorHex || '#4ade80'}"></div>
+                                <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid ${p.icon || 'fa-star'} mr-2" style="color: ${p.colorHex || '#9ca3af'}"></i> ${p.title}</h3>
+                                <p class="text-tactical-text font-mono text-sm leading-relaxed whitespace-pre-wrap">${p.content}</p>
+                            </div>
+                        `).join('')}
+                        
+                        <div class="panel-tactical p-6 rounded mt-4 text-center border border-tactical-green bg-tactical-greenDark/10">
+                            <p class="text-tactical-green font-bold text-sm tracking-widest uppercase">"${clanInfoData.quote}"</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="panel-tactical p-6 rounded">
+                            <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-fingerprint text-tactical-green mr-2"></i> Identiti Pangkalan</h3>
+                            <ul class="space-y-4 font-mono text-sm">
+                                <li class="flex flex-col border-b border-tactical-border pb-2">
+                                    <span class="text-tactical-text text-xs mb-1">NAMA RASMI KLAN</span>
+                                    <span class="text-white font-bold text-base">${clanInfoData.identity.name}</span>
+                                </li>
+                                <li class="flex justify-between border-b border-tactical-border pb-2">
+                                    <span class="text-tactical-text">TAG PANGKALAN</span>
+                                    <span class="text-tactical-green font-bold text-lg">${clanInfoData.identity.tag}</span>
+                                </li>
+                                <li class="flex justify-between border-b border-tactical-border pb-2">
+                                    <span class="text-tactical-text">TAHUN ASAS</span>
+                                    <span class="text-white font-bold">${clanInfoData.identity.year}</span>
+                                </li>
+                                <li class="flex justify-between border-b border-tactical-border pb-2">
+                                    <span class="text-tactical-text">PENGASAS</span>
+                                    <span class="text-white font-bold">${clanInfoData.identity.founder}</span>
+                                </li>
+                                <li class="flex justify-between border-b border-tactical-border pb-3">
+                                    <span class="text-tactical-text">STATUS OPERASI</span>
+                                    <span class="text-green-500 font-bold animate-pulse">${clanInfoData.identity.status}</span>
+                                </li>
+                                
+                                <!-- Senarai Pangkat Utama -->
+                                <li class="flex flex-col border-b border-tactical-border pb-2">
+                                    <span class="text-yellow-500 text-xs mb-1 font-bold"><i class="fa-solid fa-star"></i> KOMANDER KLAN</span>
+                                    <span class="text-white font-bold">${clanInfoData.identity.komander || 'Tiada Data'}</span>
+                                </li>
+                                <li class="flex flex-col border-b border-tactical-border pb-2">
+                                    <span class="text-blue-400 text-xs mb-1 font-bold"><i class="fa-solid fa-shield"></i> ADMIN / PEGAWAI</span>
+                                    <span class="text-white font-bold">${clanInfoData.identity.admin || 'Tiada Data'}</span>
+                                </li>
+                                <li class="flex flex-col">
+                                    <span class="text-purple-400 text-xs mb-1 font-bold"><i class="fa-solid fa-eye"></i> MODERATOR</span>
+                                    <span class="text-white font-bold">${clanInfoData.identity.moderator || 'Tiada Data'}</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="panel-tactical p-6 rounded">
+                            <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-gamepad text-tactical-green mr-2"></i> Rekod Pertempuran</h3>
+                            <div class="flex flex-wrap gap-2 font-mono text-xs">
+                                ${gamesHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        window.toggleEditClanInfo = function() {
+            const form = document.getElementById('clan-edit-form');
+            if (form.classList.contains('hidden')) {
+                form.classList.remove('hidden');
+                
+                // Isi semula data sedia ada
+                document.getElementById('edit-clan-name').value = clanInfoData.identity.name || '';
+                document.getElementById('edit-clan-tag').value = clanInfoData.identity.tag || '';
+                document.getElementById('edit-clan-year').value = clanInfoData.identity.year || '';
+                document.getElementById('edit-clan-founder').value = clanInfoData.identity.founder || '';
+                document.getElementById('edit-clan-status').value = clanInfoData.identity.status || '';
+                document.getElementById('edit-clan-komander').value = clanInfoData.identity.komander || '';
+                document.getElementById('edit-clan-admin').value = clanInfoData.identity.admin || '';
+                document.getElementById('edit-clan-moderator').value = clanInfoData.identity.moderator || '';
+                
+                document.getElementById('edit-clan-games').value = (clanInfoData.games || []).join(', ');
+                document.getElementById('edit-clan-quote').value = clanInfoData.quote || '';
+
+                // Fasa-fasa
+                for(let i=1; i<=3; i++) {
+                    const p = (clanInfoData.phases || [])[i-1] || { title: '', content: '', colorHex: '#4ade80', icon: 'fa-star' };
+                    document.getElementById(`edit-phase${i}-title`).value = p.title;
+                    document.getElementById(`edit-phase${i}-content`).value = p.content;
+                    document.getElementById(`edit-phase${i}-color`).value = p.colorHex || '#4ade80';
+                    document.getElementById(`edit-phase${i}-icon`).value = p.icon || 'fa-star';
+                }
+                form.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                form.classList.add('hidden');
+            }
+        }
+
+        window.saveClanInfo = async function(e) {
+            e.preventDefault();
+            if (!firebaseUser) return;
+
+            try {
+                const gamesArray = document.getElementById('edit-clan-games').value.split(',').map(s => s.trim()).filter(s => s);
+                const newData = {
+                    identity: {
+                        name: document.getElementById('edit-clan-name').value.trim(),
+                        tag: document.getElementById('edit-clan-tag').value.trim(),
+                        year: document.getElementById('edit-clan-year').value.trim(),
+                        founder: document.getElementById('edit-clan-founder').value.trim(),
+                        status: document.getElementById('edit-clan-status').value.trim(),
+                        komander: document.getElementById('edit-clan-komander').value.trim(),
+                        admin: document.getElementById('edit-clan-admin').value.trim(),
+                        moderator: document.getElementById('edit-clan-moderator').value.trim()
+                    },
+                    games: gamesArray,
+                    quote: document.getElementById('edit-clan-quote').value.trim(),
+                    phases: [
+                        {
+                            title: document.getElementById('edit-phase1-title').value.trim(),
+                            content: document.getElementById('edit-phase1-content').value.trim(),
+                            colorHex: document.getElementById('edit-phase1-color').value,
+                            icon: document.getElementById('edit-phase1-icon').value.trim()
+                        },
+                        {
+                            title: document.getElementById('edit-phase2-title').value.trim(),
+                            content: document.getElementById('edit-phase2-content').value.trim(),
+                            colorHex: document.getElementById('edit-phase2-color').value,
+                            icon: document.getElementById('edit-phase2-icon').value.trim()
+                        },
+                        {
+                            title: document.getElementById('edit-phase3-title').value.trim(),
+                            content: document.getElementById('edit-phase3-content').value.trim(),
+                            colorHex: document.getElementById('edit-phase3-color').value,
+                            icon: document.getElementById('edit-phase3-icon').value.trim()
+                        }
+                    ],
+                    updatedAt: Date.now()
+                };
+
+                const infoRef = doc(db, 'artifacts', appId, 'public', 'data', 'srteam_settings', 'clan_info');
+                await setDoc(infoRef, newData, { merge: true });
+                
+                window.showAlert('Maklumat Klan berjaya dikemas kini dan diselaras!', 'success');
+                window.toggleEditClanInfo();
+            } catch (error) {
+                console.error("Gagal simpan info klan:", error);
+                window.showAlert('Gagal menyimpan Maklumat Klan.', 'error');
+            }
+        }
+
         window.renderAdminPanel = function() {
             const userList = document.getElementById('admin-user-list');
             const tourList = document.getElementById('admin-tour-list');
@@ -1131,7 +1298,10 @@
                 if (user.status === 'approved') activeUserCount++;
 
                 const statusColor = user.status === 'pending' ? 'text-yellow-500' : (user.status === 'banned' ? 'text-red-600' : 'text-green-500');
-                const roleBadge = user.role === 'admin' ? '<span class="text-blue-400 font-bold"><i class="fa-solid fa-shield"></i> ADMIN</span>' : 'MEMBER';
+                
+                let roleBadge = 'MEMBER';
+                if (user.role === 'admin') roleBadge = '<span class="text-blue-400 font-bold"><i class="fa-solid fa-shield"></i> ADMIN</span>';
+                if (user.role === 'komander') roleBadge = '<span class="text-yellow-500 font-bold"><i class="fa-solid fa-star"></i> KOMANDER</span>';
 
                 // Format Tarikh & Masa
                 let dateDisplay = '-';
@@ -1150,10 +1320,15 @@
                     actionButtons += `<button onclick="deleteUser('${user.id}')" class="bg-red-800 hover:bg-red-600 px-3 py-1 rounded text-xs text-white ml-1">TOLAK</button>`;
                 } else {
                     if (isSuperAdmin) {
-                        if (user.role !== 'admin') {
+                        if (user.role === 'user') {
                             actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">JADI ADMIN</button>`;
-                        } else {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">BUANG ADMIN</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">JADI KOMANDER</button>`;
+                        } else if (user.role === 'admin') {
+                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">JADI KOMANDER</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">BUANG PANGKAT</button>`;
+                        } else if (user.role === 'komander') {
+                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">JADI ADMIN</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-xs text-white ml-1 mt-1 mb-1">BUANG PANGKAT</button>`;
                         }
                         
                         if (user.status !== 'banned') {
