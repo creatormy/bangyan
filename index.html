@@ -1783,21 +1783,54 @@
         }
 
         // --- FUNGSI TOURNAMENT & CHAT ---
-        window.submitTournament = async function(e) {
-            e.preventDefault();
+        window.updateTournamentPreview = function() {
+            if (!currentUser) return;
+            const namePreview = document.getElementById('tour-preview-name');
+            const phonePreview = document.getElementById('tour-preview-phone');
+            
+            if (namePreview) {
+                namePreview.textContent = currentUser.nickname || '(Sila kemas kini Nickname di Profil)';
+                if (!currentUser.nickname) namePreview.classList.add('text-red-400', 'italic');
+                else namePreview.classList.remove('text-red-400', 'italic');
+            }
+            if (phonePreview) {
+                phonePreview.textContent = currentUser.phone || '(Sila kemas kini No. WA di Profil)';
+                if (!currentUser.phone) phonePreview.classList.add('text-red-400', 'italic');
+                else phonePreview.classList.remove('text-red-400', 'italic');
+            }
+        };
+
+        window.joinTournament = async function() {
             if (!firebaseUser || !currentUser) return;
+
+            const ign = currentUser.nickname || '';
+            const phone = currentUser.phone || '';
+
+            if (!ign || !phone) {
+                window.showAlert('Permohonan Ditolak! Sila kemas kini Nickname dan Nombor WhatsApp di Profil anda terlebih dahulu.', 'error');
+                return;
+            }
+
+            // Sistem Anti-Spam: Semak jika ahli sudah berada di dalam senarai yang pending atau diluluskan
+            const isAlreadyJoined = tournaments.some(t => t.userId === currentUser.id && (t.status === 'pending' || t.status === 'approved'));
+            if (isAlreadyJoined) {
+                window.showAlert('Anda sudah memohon dan berada di dalam senarai roster. Sila tunggu.', 'warning');
+                return;
+            }
+
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments'), {
-                    ign: document.getElementById('tour-ign').value.trim(),
-                    whatsapp: document.getElementById('tour-wa').value.trim(),
+                    ign: ign,         // Diambil secara auto
+                    whatsapp: phone,  // Diambil secara auto
                     pemohon: currentUser.email,
-                    userId: currentUser.id, // TAMBAHAN KESELAMATAN: Ikat pendaftaran dengan ID Mutlak
+                    userId: currentUser.id, 
                     status: 'pending',
                     timestamp: Date.now()
                 });
-                window.showAlert('Pendaftaran SCRIM & TOUR berjaya dihantar ke Command Center.', 'success');
-                e.target.reset();
-            } catch (err) { window.showAlert('Gagal menghantar permohonan.', 'error'); }
+                window.showAlert('Berjaya bergabung! Sila tunggu pengesahan Command Center.', 'success');
+            } catch (err) { 
+                window.showAlert('Gagal menghantar permohonan.', 'error'); 
+            }
         }
 
         window.formatChatMessage = function(text, isAI) {
