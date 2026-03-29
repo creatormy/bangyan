@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRTEAM ESPORT | Official WebPage</title>
+    <title>SRTEAM ESPORT | Delta Force Tactical</title>
     <!-- Tailwind CSS untuk Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome untuk Ikon -->
@@ -707,6 +707,17 @@
             const isVerified = (user.role === 'superadmin' || user.role === 'admin' || user.role === 'komander' || user.verified);
             // Tiada lagi aksi klik di sini untuk halaman umum. Klik hanya pada halaman Profil.
             return isVerified ? `<i class="fa-solid fa-circle-check text-blue-500 ml-1 drop-shadow-[0_0_5px_rgba(59,130,246,0.6)]" title="Akaun Disahkan"></i>` : '';
+        }
+
+        // Lencana Pangkat (Role Badge) Dinamik
+        window.getSmallRoleBadge = function(user) {
+            if (!user) return '';
+            if (user.role === 'superadmin' || user.role === 'komander') {
+                return `<span class="bg-yellow-900/30 text-yellow-500 border border-yellow-700/50 px-1.5 py-0.5 rounded text-[8px] ml-1 tracking-widest"><i class="fa-solid fa-star"></i> KAPTEN</span>`;
+            } else if (user.role === 'admin') {
+                return `<span class="bg-blue-900/30 text-blue-400 border border-blue-700/50 px-1.5 py-0.5 rounded text-[8px] ml-1 tracking-widest"><i class="fa-solid fa-shield"></i> ADMIN</span>`;
+            }
+            return '';
         }
 
         // Pengurusan URL & Memori Halaman
@@ -1523,6 +1534,12 @@
                 const timeDate = new Date(tour.timestamp).toLocaleString('ms-MY', { dateStyle: 'short', timeStyle: 'short' });
                 const sColor = tour.status === 'pending' ? 'text-yellow-500' : (tour.status === 'approved' ? 'text-green-500' : 'text-red-500');
                 
+                // TAMBAHAN: Auto update nama dan tick di Admin Panel -> Scrim & Tour
+                const tourUser = users.find(u => u.email === tour.pemohon);
+                const dynamicName = tourUser ? (tourUser.nickname || tourUser.email.split('@')[0]).toUpperCase() : tour.ign;
+                const verifiedIcon = getVerifiedBadge(tourUser);
+                const roleBadge = window.getSmallRoleBadge(tourUser);
+
                 let tourActions = '';
                 if (tour.status === 'pending') {
                     tourActions += `<button onclick="updateTourStatus('${tour.id}', 'approved')" class="bg-green-800 hover:bg-green-600 px-2 py-1 rounded text-xs text-white ml-1">LULUS</button>`;
@@ -1534,7 +1551,7 @@
                 tourHtml += `
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
                         <td class="p-3 text-white">${timeDate}</td>
-                        <td class="p-3 text-tactical-green font-bold">${tour.ign}</td>
+                        <td class="p-3 text-tactical-green font-bold flex items-center gap-1">${dynamicName} ${verifiedIcon} ${roleBadge}</td>
                         <td class="p-3 text-white">${tour.whatsapp}</td>
                         <td class="p-3 font-bold ${sColor}">${tour.status.toUpperCase()}</td>
                         <td class="p-3 text-right">${tourActions}</td>
@@ -1643,16 +1660,18 @@
                 const timeDate = new Date(tour.timestamp).toLocaleDateString('ms-MY');
                 const tourUser = users.find(u => u.email === tour.pemohon);
                 
-                // Avatar dan Blue Tick untuk Roster Tournament
+                // Avatar, Nama Dinamik, Blue Tick dan Pangkat untuk Roster Tournament
+                const dynamicName = tourUser ? (tourUser.nickname || tourUser.email.split('@')[0]).toUpperCase() : tour.ign;
                 const avatarImg = (tourUser && tourUser.photoURL) ? `<img src="${tourUser.photoURL}" class="w-6 h-6 rounded-full object-cover inline-block mr-2 border border-tactical-green/50 shrink-0">` : `<div class="w-6 h-6 rounded-full bg-tactical-panel border border-tactical-border text-[8px] inline-flex items-center justify-center mr-2 shrink-0"><i class="fa-solid fa-user-astronaut"></i></div>`;
                 const verifiedIcon = getVerifiedBadge(tourUser);
+                const roleBadge = window.getSmallRoleBadge(tourUser);
 
                 html += `
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
                         <td class="p-3 text-tactical-text">${timeDate}</td>
                         <td class="p-3 font-bold">
                             <a onclick="navigateTo('profile', '${tour.pemohon}')" class="cursor-pointer text-tactical-green hover:text-white transition flex items-center w-full gap-1">
-                                ${avatarImg} <span class="truncate hover:underline">${tour.ign}</span> ${verifiedIcon}
+                                ${avatarImg} <span class="truncate hover:underline">${dynamicName}</span> ${verifiedIcon} ${roleBadge}
                             </a>
                         </td>
                         <td class="p-3 text-green-500 font-bold text-xs"><i class="fa-solid fa-check"></i> DISAHKAN</td>
@@ -1822,6 +1841,7 @@
                     : `<div onclick="${chatUser ? `MapsTo('profile', '${chatUser.email}')` : ''}" class="w-5 h-5 rounded-full bg-tactical-dark inline-flex items-center justify-center border border-tactical-border/50 text-[8px] text-tactical-green shrink-0 ${chatUser ? 'cursor-pointer hover:bg-tactical-green hover:text-black transition' : ''}" title="Lihat Profil"><i class="fa-solid fa-user"></i></div>`;
                 
                 const verifiedIcon = getVerifiedBadge(chatUser);
+                const roleBadge = window.getSmallRoleBadge(chatUser);
                 const clickableNameTag = chatUser ? `<a onclick="navigateTo('profile', '${chatUser.email}')" class="cursor-pointer hover:underline">${currentName}</a>` : currentName;
                 const deleteBtnHtml = isAuthorizedToDelete ? `<i class="fa-solid fa-trash text-red-500/70 hover:text-red-500 cursor-pointer ml-2 hover:scale-110 transition" onclick="deleteChat('${chat.id}')" title="Padam Chat Ini"></i>` : '';
 
@@ -1832,7 +1852,7 @@
                         <div class="self-end max-w-[85%] flex flex-col items-end mb-2">
                             <div class="flex items-center justify-end gap-1.5 mb-1 px-1">
                                 <span class="text-[10px] font-bold text-tactical-green tracking-wider">${clickableNameTag}</span>
-                                ${verifiedIcon}
+                                ${verifiedIcon} ${roleBadge}
                                 <div class="ml-1">${avatarImg}</div>
                             </div>
                             <div class="bg-tactical-greenDark text-white px-4 py-2 rounded-2xl rounded-tr-sm shadow-md border border-tactical-green/30 text-left">
@@ -1859,7 +1879,7 @@
                             <div class="flex items-center justify-start gap-1.5 mb-1 px-1">
                                 <div class="mr-1">${avatarImg}</div>
                                 <span class="text-[10px] font-bold text-tactical-text tracking-wider">${clickableNameTag}</span>
-                                ${verifiedIcon}
+                                ${verifiedIcon} ${roleBadge}
                             </div>
                             <div class="bg-tactical-panel text-gray-200 px-4 py-2 rounded-2xl rounded-tl-sm shadow-md border border-tactical-border/50 text-left">
                                 <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans break-words">${displayMessage}</div>
