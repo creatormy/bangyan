@@ -118,20 +118,17 @@
 <body class="font-tactical flex flex-col min-h-screen relative overflow-x-hidden">
     <div class="scanline"></div>
 
-    <!-- Pengepala / Navbar & Headbar Digabungkan (Sebaris Kiri-Kanan) -->
+    <!-- Pengepala / Navbar & Headbar Digabungkan -->
     <header class="bg-tactical-dark border-b border-tactical-border sticky top-0 z-50 shadow-[0_5px_15px_rgba(0,0,0,0.5)]">
         <div class="w-full px-2 lg:px-4 py-2 lg:py-3 flex flex-row items-center justify-between gap-2">
-            
-            <!-- Bahagian Logo (Hujung Kiri) -->
+            <!-- Bahagian Logo -->
             <div class="flex items-center cursor-pointer flex-shrink-0" onclick="navigateTo('home')" title="Halaman Utama">
                 <img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" alt="Logo SRTEAM" class="h-10 lg:h-12 w-auto drop-shadow-[0_0_10px_rgba(74,222,128,0.6)] hover:scale-105 transition-transform duration-300">
             </div>
-
             <!-- Bahagian Menu -->
             <nav class="flex flex-row flex-nowrap items-center justify-end gap-3 lg:gap-6 overflow-x-auto no-scrollbar" id="main-nav">
                 <!-- Akan diisi oleh JavaScript -->
             </nav>
-            
         </div>
     </header>
 
@@ -140,7 +137,7 @@
         <p id="alert-message" class="flex items-center text-white font-bold tracking-wide"></p>
     </div>
 
-    <!-- Modal Info Blue Tick (Baharu) -->
+    <!-- Modal Info Blue Tick -->
     <div id="verified-info-modal" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
         <div class="panel-tactical p-6 rounded border border-blue-500 w-full max-w-md shadow-[0_0_30px_rgba(59,130,246,0.3)] text-center relative">
             <button onclick="toggleVerifiedInfo()" class="absolute top-3 right-4 text-tactical-text hover:text-white transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
@@ -231,7 +228,6 @@
             <div id="profile-display" class="panel-tactical p-8 rounded flex flex-col md:flex-row gap-8 items-center md:items-start relative">
                 <button id="btn-edit-profile" onclick="toggleEditProfile()" class="absolute top-4 right-4 text-tactical-text hover:text-white transition text-xs border border-tactical-border px-3 py-1 rounded bg-tactical-dark hover:bg-tactical-green hover:text-black z-10"><i class="fa-solid fa-pen-to-square"></i> KEMASKINI</button>
                 
-                <!-- Gambar Profil Baru -->
                 <div id="profile-avatar-container" class="w-32 h-32 rounded-full bg-tactical-dark border-2 border-tactical-green flex items-center justify-center text-5xl text-tactical-greenDark shadow-[0_0_15px_rgba(74,222,128,0.3)] shrink-0 overflow-hidden bg-cover bg-center">
                     <i id="profile-default-icon" class="fa-solid fa-user"></i>
                 </div>
@@ -277,8 +273,6 @@
             <div id="profile-edit-form" class="panel-tactical p-8 rounded hidden mt-6 border-t-4 border-t-tactical-green shadow-2xl">
                 <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2">KEMASKINI DOSIER PERIBADI</h3>
                 <form onsubmit="saveProfile(event)">
-                    
-                    <!-- Input Gambar Baru -->
                     <div class="mb-4 p-4 border border-tactical-border bg-tactical-dark rounded">
                         <label class="block text-tactical-green text-xs font-bold mb-2 font-mono"><i class="fa-solid fa-camera mr-2"></i> GAMBAR PROFIL (MAX 2MB)</label>
                         <input class="text-white w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-tactical-greenDark file:text-white hover:file:bg-tactical-green hover:file:text-black" id="edit-photo" type="file" accept="image/*">
@@ -329,7 +323,7 @@
                 <!-- Akan diisi oleh JavaScript renderClanInfo -->
             </div>
 
-            <!-- Borang Edit Info Klan (Admin/Superadmin) -->
+            <!-- Borang Edit Info Klan -->
             <div id="clan-edit-form" class="hidden panel-tactical p-6 rounded mt-6 border-t-4 border-t-tactical-green shadow-2xl">
                 <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-pen"></i> KEMASKINI MAKLUMAT KLAN</h3>
                 <form onsubmit="saveClanInfo(event)">
@@ -406,7 +400,6 @@
             <h2 class="text-3xl font-bold text-white mb-4 border-b border-tactical-border pb-2 uppercase tracking-wider"><i class="fa-solid fa-walkie-talkie text-tactical-green mr-2"></i> BASECAMP CHAT</h2>
             
             <div class="panel-tactical rounded-xl flex-grow flex flex-col overflow-hidden border border-tactical-border shadow-lg relative bg-[#0b100c] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
-                <!-- Header Chat -->
                 <div class="bg-tactical-dark/95 backdrop-blur p-3 flex justify-between items-center border-b border-tactical-border z-10">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-tactical-greenDark flex items-center justify-center text-tactical-green border border-tactical-green">
@@ -419,12 +412,10 @@
                     </div>
                 </div>
 
-                <!-- Ruang Mesej -->
                 <div class="flex-grow p-4 overflow-y-auto flex flex-col space-y-3 z-10 scroll-smooth" id="chat-messages">
                     <!-- Akan diisi oleh JavaScript -->
                 </div>
 
-                <!-- Ruang Menaip -->
                 <div class="p-3 bg-tactical-dark/95 backdrop-blur border-t border-tactical-border z-10">
                     <form onsubmit="sendChat(event)" class="flex gap-2 items-center">
                         <div class="relative flex-grow">
@@ -449,20 +440,18 @@
                 </div>
             </div>
 
+            <!-- KOTAK PENDAFTARAN BAHARU (1 KLIK) -->
             <div class="panel-tactical p-8 rounded max-w-2xl mx-auto border-l-4 border-l-blue-600">
-                <p class="text-tactical-text font-mono mb-6 text-sm">Sila isikan IGN rasmi dan Nombor WhatsApp untuk tujuan pendaftaran ke dalam senarai roster. Pengesahan daripada Command Center diperlukan selepas memohon.</p>
+                <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2"><i class="fa-solid fa-right-to-bracket text-blue-500 mr-2"></i> SERTAI ROSTER</h3>
+                <p class="text-tactical-text font-mono mb-4 text-sm">Anda tidak perlu mengisi borang manual. Sistem akan mengekstrak Nickname dan Nombor WhatsApp terus daripada fail Profil anda.</p>
                 
-                <form onsubmit="submitTournament(event)">
-                    <div class="mb-4">
-                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">IN-GAME NAME (IGN)</label>
-                        <input class="input-tactical w-full p-3 rounded text-xl" type="text" id="tour-ign" required placeholder="Cth: SR BangYan">
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NOMBOR WHATSAPP</label>
-                        <input class="input-tactical w-full p-3 rounded text-xl tracking-widest" type="text" id="tour-wa" required placeholder="01X-XXXXXXX">
-                    </div>
-                    <button type="submit" class="btn-tactical w-full py-4 rounded text-lg"><i class="fa-solid fa-file-signature mr-2"></i> HANTAR PENDAFTARAN</button>
-                </form>
+                <div class="bg-tactical-dark p-4 rounded border border-tactical-border mb-6">
+                    <p class="text-xs text-tactical-text font-mono mb-2">SEMAKAN DATA PENDAFTARAN ANDA:</p>
+                    <p class="text-white font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-tactical-green w-6 text-center"></i> <span id="tour-preview-name" class="tracking-wider">...</span></p>
+                    <p class="text-white font-bold text-lg mt-2 flex items-center gap-2"><i class="fa-brands fa-whatsapp text-green-500 w-6 text-center"></i> <span id="tour-preview-phone" class="tracking-widest">...</span></p>
+                </div>
+
+                <button type="button" onclick="joinTournament()" class="btn-tactical w-full py-4 rounded text-lg transition-transform active:scale-95"><i class="fa-solid fa-hand-fist mr-2"></i> BERGABUNG SEKARANG</button>
             </div>
 
             <div class="panel-tactical p-8 rounded max-w-2xl mx-auto border-l-4 border-l-green-600 mt-8">
@@ -507,7 +496,6 @@
 
                 <!-- Senarai Pengesahan -->
                 <div class="lg:col-span-3">
-                    <!-- Tab Navigasi -->
                     <div class="flex border-b border-tactical-border mb-6">
                         <button onclick="switchAdminTab('tab-members')" id="btn-tab-members" class="admin-tab-btn px-6 py-3 font-bold text-tactical-green border-b-2 border-tactical-green bg-tactical-panel transition uppercase tracking-wider text-sm">Data Member</button>
                         <button onclick="switchAdminTab('tab-tours')" id="btn-tab-tours" class="admin-tab-btn px-6 py-3 font-bold text-tactical-text hover:text-white transition uppercase tracking-wider text-sm">Scrim & Tour</button>
@@ -621,7 +609,6 @@
                         DIBANGUNKAN OLEH BANGYAN <i class="fa-brands fa-tiktok text-xs ml-1"></i> @bangyanasli
                     </a>
                 </div>
-                
                 <div class="flex items-center gap-4">
                     <span class="text-tactical-text font-mono text-sm hidden md:inline">KOMUNIKASI RASMI:</span>
                     <a href="https://tiktok.com/@srteamofficial" target="_blank" class="btn-tactical py-2 px-4 rounded text-sm flex items-center gap-2">
@@ -629,7 +616,6 @@
                     </a>
                 </div>
             </div>
-
             <!-- Bahagian Menu Kawalan (Footer Actions) -->
             <div id="footer-actions" class="flex flex-wrap justify-center md:justify-end gap-3 border-t border-tactical-border/50 pt-4 hidden">
                 <!-- Akan diisi oleh JavaScript -->
@@ -673,7 +659,7 @@
         let users = [];
         let tournaments = [];
         let announcements = []; 
-        let chatsData = []; // Tambahan: Simpan data chat di memori untuk auto-update
+        let chatsData = []; 
         
         const defaultClanInfo = {
             identity: {
@@ -693,7 +679,7 @@
         let currentUser = JSON.parse(localStorage.getItem('srteam_session')) || JSON.parse(sessionStorage.getItem('srteam_session')) || null;
         let isLoginMode = true;
 
-        // Fungsi Helper untuk Blue Tick
+        // --- FUNGSI HELPER UI ---
         window.toggleVerifiedInfo = function() {
             const modal = document.getElementById('verified-info-modal');
             if (modal.classList.contains('hidden')) {
@@ -706,11 +692,9 @@
         function getVerifiedBadge(user) {
             if (!user) return '';
             const isVerified = (user.role === 'superadmin' || user.role === 'admin' || user.role === 'komander' || user.verified);
-            // Tiada lagi aksi klik di sini untuk halaman umum. Klik hanya pada halaman Profil.
             return isVerified ? `<i class="fa-solid fa-circle-check text-blue-500 ml-1 drop-shadow-[0_0_5px_rgba(59,130,246,0.6)]" title="Akaun Disahkan"></i>` : '';
         }
 
-        // Lencana Pangkat (Role Badge) Dinamik
         window.getSmallRoleBadge = function(user) {
             if (!user) return '';
             if (user.role === 'superadmin' || user.role === 'komander') {
@@ -721,7 +705,6 @@
             return '';
         }
 
-        // Pengurusan URL & Memori Halaman
         window.handleRoute = function() {
             const hash = window.location.hash.substring(1);
             if (!hash) {
@@ -770,12 +753,12 @@
                 });
             } catch (error) {
                 console.error("Firebase Error:", error);
-                window.showAlert("Gagal menyambung ke pangkalan data. Sila pastikan Authentication (Anonymous) telah diaktifkan.", "error");
+                window.showAlert("Gagal menyambung ke pangkalan data.", "error");
             }
-
-            window.handleRoute(); // Automatik baca URL semasa muat halaman
+            window.handleRoute();
         }
 
+        // --- SISTEM PEMANTAUAN AUTO-UPDATE FIRESTORE ---
         function setupFirestoreListeners() {
             if (!firebaseUser) return;
 
@@ -801,13 +784,11 @@
                         } else {
                             sessionStorage.setItem('srteam_session', JSON.stringify(currentUser));
                         }
-                        
                         window.updateNavigation();
                     }
                 }
                 
-                // AUTO-UPDATE MENYELURUH: 
-                // Segarkan semula semua senarai sekiranya ada perubahan profil/pangkat ahli
+                // AUTO-UPDATE KE SEMUA PAPARAN JIKA PROFIL BERUBAH
                 if (currentUser && (currentUser.role === 'admin' || currentUser.role === 'superadmin' || currentUser.role === 'komander')) {
                     window.renderAdminPanel();
                 }
@@ -815,14 +796,12 @@
                 if (typeof renderChats === 'function' && chatsData.length > 0) {
                     renderChats(chatsData);
                 }
-
-                // Refresh data/paparan pada URL semasa bila database update
                 window.handleRoute(); 
             });
 
             const chatRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats');
             onSnapshot(chatRef, (snapshot) => {
-                chatsData = []; // Kemas kini pembolehubah global
+                chatsData = []; 
                 snapshot.forEach(doc => chatsData.push({ id: doc.id, ...doc.data() }));
                 chatsData.sort((a, b) => {
                     const timeA = a.timestamp ? (typeof a.timestamp.toMillis === 'function' ? a.timestamp.toMillis() : a.timestamp) : Date.now();
@@ -948,7 +927,6 @@
                 if (targetEmail && viewId === 'profile') {
                     hashStr += '?id=' + encodeURIComponent(targetEmail);
                 }
-                // Elak berlakunya pusingan berulang hashchange
                 if (window.location.hash !== '#' + hashStr) {
                     window.history.pushState(null, '', '#' + hashStr);
                 }
@@ -988,7 +966,6 @@
                 const profileRole = document.getElementById('profile-role');
                 if (profileRole) profileRole.textContent = `PERANAN: ${roleText}`;
 
-                // Integrasi Gambar Profil & Blue Tick
                 const avatarContainer = document.getElementById('profile-avatar-container');
                 const defaultIcon = document.getElementById('profile-default-icon');
                 if (displayUser.photoURL) {
@@ -1009,7 +986,6 @@
                     verifiedBadge.classList.add('hidden');
                 }
 
-                // Pautan WhatsApp
                 const profileWaLink = document.getElementById('profile-wa-link');
                 const profilePhone = document.getElementById('profile-phone');
                 if (profileWaLink && profilePhone) {
@@ -1044,6 +1020,7 @@
             if (viewId === 'tournament') {
                 window.renderApprovedTournaments();
                 window.renderAnnouncements();
+                window.updateTournamentPreview();
             }
             if (viewId === 'clan') {
                 window.renderClanInfo();
@@ -1061,13 +1038,12 @@
                 document.getElementById('edit-bio').value = currentUser.bio || '';
                 document.getElementById('edit-story').value = currentUser.story || '';
                 document.getElementById('edit-password').value = ''; 
-                document.getElementById('edit-photo').value = ''; // Reset file input
+                document.getElementById('edit-photo').value = ''; 
             } else {
                 form.classList.add('hidden');
             }
         }
 
-        // Fungsi Memampatkan (Compress) Gambar
         async function compressImage(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -1097,7 +1073,6 @@
                         canvas.height = height;
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
-                        // Kualiti 0.8 untuk saiz yang kecil
                         resolve(canvas.toDataURL('image/jpeg', 0.8));
                     };
                     img.onerror = error => reject(error);
@@ -1123,7 +1098,7 @@
             const newStory = document.getElementById('edit-story').value.trim();
             
             try {
-                // BUG FIX: Semak duplikasi ID/Nickname (Halang curi/tiru ID orang lain)
+                // Halang Penipuan ID
                 const isDuplicate = users.some(u => u.id !== currentUser.id && ((u.email.toLowerCase() === newEmail.toLowerCase()) || (newNick && u.nickname && u.nickname.toLowerCase() === newNick.toLowerCase())));
                 if (isDuplicate) {
                     window.showAlert('Ralat: Emel atau Nickname ini telah pun digunakan oleh ahli lain!', 'error');
@@ -1136,11 +1111,10 @@
                 const updates = { email: newEmail, nickname: newNick, phone: newPhone, bio: newBio, story: newStory };
                 if (newPass) updates.password = newPass; 
                 
-                // Logik Muat Naik & Compress Gambar
                 const photoInput = document.getElementById('edit-photo');
                 if (photoInput && photoInput.files && photoInput.files[0]) {
                     const file = photoInput.files[0];
-                    if(file.size > 2097152) { // Max 2MB file limit sebelum compress
+                    if(file.size > 2097152) {
                         window.showAlert('Sila pilih gambar kurang dari 2MB.', 'warning');
                         btnSave.innerHTML = origText;
                         btnSave.disabled = false;
@@ -1192,9 +1166,7 @@
                 document.getElementById('auth-switch-text').innerHTML = 'Sudah mempunyai akses? <a onclick="toggleAuthMode()" class="cursor-pointer text-tactical-green hover:underline font-bold">Log Masuk Sini</a>';
             }
             
-            if (keepAlert !== true) {
-                window.hideAlert();
-            }
+            if (keepAlert !== true) window.hideAlert();
         }
 
         window.handleAuth = async function(e) {
@@ -1258,7 +1230,6 @@
                     document.getElementById('auth-form').reset();
                 }
             } catch (error) {
-                console.error("Auth Error:", error);
                 if (error.message !== 'Duplicate' && error.message !== 'No Firebase') {
                     window.showAlert('Gagal: ' + (error.code || error.message), 'error');
                 }
@@ -1278,7 +1249,7 @@
             window.showAlert('Sesi ditamatkan. Anda telah log keluar.', 'success');
         }
 
-        // --- FUNGSI INFO KLAN DINAMIK ---
+        // --- FUNGSI INFO KLAN ---
         window.renderClanInfo = function() {
             const container = document.getElementById('clan-content-container');
             if (!container) return;
@@ -1444,13 +1415,13 @@
             }
         }
 
+        // --- FUNGSI ADMIN ---
         window.renderAdminPanel = function() {
             const userList = document.getElementById('admin-user-list');
             const tourList = document.getElementById('admin-tour-list');
             let pendingUserCount = 0; let activeUserCount = 0; let pendingTourCount = 0;
             const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
 
-            // 1. Render Users
             let userHtml = '';
             users.forEach((user) => {
                 if (user.id === currentUser.id) return; 
@@ -1475,7 +1446,6 @@
                     dateDisplay = `<span class="text-tactical-green font-bold">${dayName}</span><br>${dateStr}<br><span class="text-xs text-tactical-text mt-1 block"><i class="fa-regular fa-clock"></i> ${timeStr}</span>`;
                 }
 
-                // Setup Display User di Table (Avatar + Verified Tick)
                 const avatarImgList = user.photoURL ? `<img src="${user.photoURL}" class="w-6 h-6 rounded-full object-cover inline-block mr-2 border border-tactical-green/50 shrink-0 cursor-pointer hover:opacity-80 transition" onclick="navigateTo('profile', '${user.email}')" title="Lihat Profil">` : `<div onclick="navigateTo('profile', '${user.email}')" class="w-6 h-6 rounded-full bg-tactical-panel border border-tactical-border text-[8px] flex items-center justify-center mr-2 shrink-0 cursor-pointer hover:bg-tactical-green hover:text-black transition" title="Lihat Profil"><i class="fa-solid fa-user"></i></div>`;
                 const verifiedIconList = getVerifiedBadge(user);
 
@@ -1485,7 +1455,6 @@
                     actionButtons += `<button onclick="deleteUser('${user.id}')" class="bg-red-800 hover:bg-red-600 px-3 py-1 rounded text-xs text-white ml-1">TOLAK</button>`;
                 } else {
                     if (isSuperAdmin || currentUser.role === 'komander') {
-                        // Butang Blue Tick (Khusus untuk anggota biasa sahaja)
                         if (user.role === 'user') {
                             const verifyBtnText = user.verified ? '<i class="fa-solid fa-xmark"></i> BUANG TICK' : '<i class="fa-solid fa-check"></i> BERI TICK';
                             const verifyBtnColor = user.verified ? 'bg-gray-700 hover:bg-gray-600' : 'bg-blue-600 hover:bg-blue-500';
@@ -1535,14 +1504,12 @@
             });
             if (userList) userList.innerHTML = userHtml === '' ? `<tr><td colspan="6" class="p-4 text-center text-tactical-text">Tiada rekod member.</td></tr>` : userHtml;
 
-            // 2. Render Scrim & Tour
             let tourHtml = '';
             tournaments.forEach((tour) => {
                 if (tour.status === 'pending') pendingTourCount++;
                 const timeDate = new Date(tour.timestamp).toLocaleString('ms-MY', { dateStyle: 'short', timeStyle: 'short' });
                 const sColor = tour.status === 'pending' ? 'text-yellow-500' : (tour.status === 'approved' ? 'text-green-500' : 'text-red-500');
                 
-                // TAMBAHAN: Cari pengguna melalui Unik ID (Lebih kebal) atau fallback ke emel
                 const tourUser = users.find(u => (tour.userId && u.id === tour.userId) || u.email === tour.pemohon);
                 const dynamicName = tourUser ? (tourUser.nickname || tourUser.email.split('@')[0]).toUpperCase() : tour.ign;
                 const verifiedIcon = getVerifiedBadge(tourUser);
@@ -1560,7 +1527,7 @@
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
                         <td class="p-3 text-white">${timeDate}</td>
                         <td class="p-3 text-tactical-green font-bold flex items-center gap-1">${dynamicName} ${verifiedIcon} ${roleBadge}</td>
-                        <td class="p-3 text-white">${tour.whatsapp}</td>
+                        <td class="p-3 text-white">${tourUser ? (tourUser.phone || tour.whatsapp) : tour.whatsapp}</td>
                         <td class="p-3 font-bold ${sColor}">${tour.status.toUpperCase()}</td>
                         <td class="p-3 text-right">${tourActions}</td>
                     </tr>
@@ -1578,37 +1545,25 @@
             if(statTourPending) statTourPending.textContent = pendingTourCount;
         }
 
-        // --- FUNGSI ADMIN SUPER (PENGGUNA) ---
         window.updateUserStatus = async function(id, status) {
-            if (!firebaseUser) return;
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { status: status });
-                window.showAlert(`Status pengguna ditukar kepada ${status}.`, 'success');
-            } catch (err) { console.error(err); }
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { status: status }); } catch (err) { }
         }
 
-        // Fungsi Tukar Status Verified (Blue Tick)
         window.toggleVerifyStatus = async function(id, currentStatus) {
-            if (!firebaseUser) return;
             try {
                 const newStatus = !currentStatus;
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { verified: newStatus });
                 window.showAlert(newStatus ? 'Blue Tick Rasmi telah diberikan!' : 'Blue Tick Rasmi ditarik balik.', 'success');
-            } catch (err) { console.error(err); }
+            } catch (err) { }
         }
 
         window.deleteUser = async function(id) {
             if(!confirm('Buang sepenuhnya pemohon ini?')) return;
-            try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id));
-                window.showAlert('Rekod berjaya dipadam.', 'warning');
-            } catch (err) { console.error(err); }
+            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id)); } catch (err) { }
         }
+
         window.setRole = async function(id, role) {
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { role: role });
-                window.showAlert(`Peranan berjaya diubah ke ${role}.`, 'success');
-            } catch (err) { console.error(err); }
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', id), { role: role }); } catch (err) { }
         }
         
         window.openEditAdminModal = function(id) {
@@ -1621,13 +1576,13 @@
             document.getElementById('admin-edit-modal').classList.remove('hidden');
         }
         window.closeAdminEditModal = function() { document.getElementById('admin-edit-modal').classList.add('hidden'); }
+        
         window.saveAdminEditProfile = async function(e) {
             e.preventDefault();
             const id = document.getElementById('admin-edit-id').value;
             const newEmail = document.getElementById('admin-edit-email').value.trim();
             const newNick = document.getElementById('admin-edit-nickname').value.trim();
             
-            // BUG FIX: Semak Duplikasi
             const isDuplicate = users.some(u => u.id !== id && ((u.email.toLowerCase() === newEmail.toLowerCase()) || (newNick && u.nickname && u.nickname.toLowerCase() === newNick.toLowerCase())));
             if (isDuplicate) {
                 window.showAlert('Ralat: Emel atau Nickname ini sedang digunakan oleh ahli lain!', 'error');
@@ -1645,11 +1600,8 @@
             } catch(err) { console.error(err); }
         }
 
-        // --- FUNGSI ADMIN (SCRIM & TOUR) ---
         window.updateTourStatus = async function(id, status) {
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments', id), { status: status });
-            } catch(err) { console.error(err); }
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments', id), { status: status }); } catch(err) { }
         }
         window.deleteTour = async function(id) {
             if(confirm('Padam pendaftaran misi ini?')) {
@@ -1657,44 +1609,6 @@
             }
         }
 
-        window.renderApprovedTournaments = function() {
-            const listContainer = document.getElementById('approved-tour-list');
-            if (!listContainer) return;
-
-            let html = '';
-            const approvedTours = tournaments.filter(t => t.status === 'approved');
-
-            approvedTours.forEach(tour => {
-                const timeDate = new Date(tour.timestamp).toLocaleDateString('ms-MY');
-                // TAMBAHAN: Cari pengguna melalui Unik ID (Lebih kebal) atau fallback ke emel
-                const tourUser = users.find(u => (tour.userId && u.id === tour.userId) || u.email === tour.pemohon);
-                
-                // Avatar, Nama Dinamik, Blue Tick dan Pangkat untuk Roster Tournament
-                const dynamicName = tourUser ? (tourUser.nickname || tourUser.email.split('@')[0]).toUpperCase() : tour.ign;
-                const avatarImg = (tourUser && tourUser.photoURL) ? `<img src="${tourUser.photoURL}" class="w-6 h-6 rounded-full object-cover inline-block mr-2 border border-tactical-green/50 shrink-0 cursor-pointer hover:opacity-80 transition" onclick="navigateTo('profile', '${tourUser.email}')">` : `<div onclick="${tourUser ? `MapsTo('profile', '${tourUser.email}')` : ''}" class="w-6 h-6 rounded-full bg-tactical-panel border border-tactical-border text-[8px] inline-flex items-center justify-center mr-2 shrink-0 ${tourUser ? 'cursor-pointer hover:bg-tactical-green hover:text-black transition' : ''}"><i class="fa-solid fa-user-astronaut"></i></div>`;
-                const verifiedIcon = getVerifiedBadge(tourUser);
-                const roleBadge = window.getSmallRoleBadge(tourUser);
-
-                html += `
-                    <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
-                        <td class="p-3 text-tactical-text">${timeDate}</td>
-                        <td class="p-3 font-bold">
-                            <a onclick="navigateTo('profile', '${tour.pemohon}')" class="cursor-pointer text-tactical-green hover:text-white transition flex items-center w-full gap-1">
-                                ${avatarImg} <span class="truncate hover:underline">${dynamicName}</span> ${verifiedIcon} ${roleBadge}
-                            </a>
-                        </td>
-                        <td class="p-3 text-green-500 font-bold text-xs"><i class="fa-solid fa-check"></i> DISAHKAN</td>
-                    </tr>
-                `;
-            });
-
-            if (html === '') {
-                html = `<tr><td colspan="3" class="p-4 text-center text-tactical-text text-xs">Belum ada roster yang disahkan.</td></tr>`;
-            }
-            listContainer.innerHTML = html;
-        }
-
-        // --- FUNGSI PENGUMUMAN MISI (MINI BLOG) ---
         window.renderAnnouncements = function() {
             const list = document.getElementById('tournament-announcements-list');
             if (!list) return;
@@ -1767,7 +1681,6 @@
                 e.target.reset();
             } catch (err) { 
                 window.showAlert('Gagal menambah maklumat.', 'error');
-                console.error(err); 
             }
         }
 
@@ -1776,13 +1689,48 @@
                 try {
                     await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_announcements', id));
                     window.showAlert('Maklumat misi dipadam.', 'success');
-                } catch (err) {
-                    window.showAlert('Gagal memadam.', 'error');
-                }
+                } catch (err) { }
             }
         }
 
-        // --- FUNGSI TOURNAMENT & CHAT ---
+        // --- FUNGSI SCRIM / TOUR 1-KLIK ---
+        window.renderApprovedTournaments = function() {
+            const listContainer = document.getElementById('approved-tour-list');
+            if (!listContainer) return;
+
+            let html = '';
+            const approvedTours = tournaments.filter(t => t.status === 'approved');
+
+            approvedTours.forEach(tour => {
+                const timeDate = new Date(tour.timestamp).toLocaleDateString('ms-MY');
+                const tourUser = users.find(u => (tour.userId && u.id === tour.userId) || u.email === tour.pemohon);
+                
+                const dynamicName = tourUser ? (tourUser.nickname || tourUser.email.split('@')[0]).toUpperCase() : tour.ign;
+                const avatarImg = (tourUser && tourUser.photoURL) 
+                    ? `<img src="${tourUser.photoURL}" class="w-6 h-6 rounded-full object-cover inline-block mr-2 border border-tactical-green/50 shrink-0 cursor-pointer hover:opacity-80 transition" onclick="navigateTo('profile', '${tourUser.email}')">` 
+                    : `<div onclick="${tourUser ? `MapsTo('profile', '${tourUser.email}')` : ''}" class="w-6 h-6 rounded-full bg-tactical-panel border border-tactical-border text-[8px] inline-flex items-center justify-center mr-2 shrink-0 ${tourUser ? 'cursor-pointer hover:bg-tactical-green hover:text-black transition' : ''}"><i class="fa-solid fa-user-astronaut"></i></div>`;
+                const verifiedIcon = getVerifiedBadge(tourUser);
+                const roleBadge = window.getSmallRoleBadge(tourUser);
+
+                html += `
+                    <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
+                        <td class="p-3 text-tactical-text">${timeDate}</td>
+                        <td class="p-3 font-bold">
+                            <a onclick="navigateTo('profile', '${tour.pemohon}')" class="cursor-pointer text-tactical-green hover:text-white transition flex items-center w-full gap-1">
+                                ${avatarImg} <span class="truncate hover:underline">${dynamicName}</span> ${verifiedIcon} ${roleBadge}
+                            </a>
+                        </td>
+                        <td class="p-3 text-green-500 font-bold text-xs"><i class="fa-solid fa-check"></i> DISAHKAN</td>
+                    </tr>
+                `;
+            });
+
+            if (html === '') {
+                html = `<tr><td colspan="3" class="p-4 text-center text-tactical-text text-xs">Belum ada roster yang disahkan.</td></tr>`;
+            }
+            listContainer.innerHTML = html;
+        }
+
         window.updateTournamentPreview = function() {
             if (!currentUser) return;
             const namePreview = document.getElementById('tour-preview-name');
@@ -1811,7 +1759,6 @@
                 return;
             }
 
-            // Sistem Anti-Spam: Semak jika ahli sudah berada di dalam senarai yang pending atau diluluskan
             const isAlreadyJoined = tournaments.some(t => t.userId === currentUser.id && (t.status === 'pending' || t.status === 'approved'));
             if (isAlreadyJoined) {
                 window.showAlert('Anda sudah memohon dan berada di dalam senarai roster. Sila tunggu.', 'warning');
@@ -1820,8 +1767,8 @@
 
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments'), {
-                    ign: ign,         // Diambil secara auto
-                    whatsapp: phone,  // Diambil secara auto
+                    ign: ign,         
+                    whatsapp: phone,  
                     pemohon: currentUser.email,
                     userId: currentUser.id, 
                     status: 'pending',
@@ -1833,6 +1780,7 @@
             }
         }
 
+        // --- FUNGSI BASECAMP CHAT ---
         window.formatChatMessage = function(text, isAI) {
             if (!text) return '';
             
@@ -1867,7 +1815,6 @@
                 const timeStr = dateObj.toLocaleTimeString('ms-MY', { hour12: false, hour: '2-digit', minute: '2-digit' });
                 const displayTime = chatDate === today ? timeStr : `${chatDate} ${timeStr}`;
 
-                // Logik Dinamik Auto-Update Nama Sender (Lebih Kebal dengan ID Mutlak)
                 let chatUser = null;
                 if (chat.senderId) {
                     chatUser = users.find(u => u.id === chat.senderId);
@@ -1879,7 +1826,6 @@
 
                 const currentName = chatUser ? (chatUser.nickname || chatUser.email.split('@')[0]).toUpperCase() : chat.sender;
                 
-                // Pengecaman "Saya" yang lebih tepat
                 const isMe = chatUser && currentUser ? (chatUser.id === currentUser.id) : 
                             ((chat.senderEmail && currentUser && chat.senderEmail === currentUser.email) || 
                             (chat.sender === (currentUser?.nickname || currentUser?.email.split('@')[0])?.toUpperCase()));
@@ -1966,7 +1912,7 @@
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats'), {
                     sender: senderName, 
                     senderEmail: currentUser.email, 
-                    senderId: currentUser.id, // TAMBAHAN KESELAMATAN: Ikat mesej dengan ID Mutlak
+                    senderId: currentUser.id, 
                     message: message,
                     timestamp: serverTimestamp()
                 });
@@ -1981,7 +1927,6 @@
                     await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_chats', id));
                     window.showAlert('Mesej berjaya dipadam.', 'success');
                 } catch (err) {
-                    console.error(err);
                     window.showAlert('Gagal memadam mesej.', 'error');
                 }
             }
