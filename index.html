@@ -1771,68 +1771,8 @@
         }
 
         window.playLastAITTS = async function() {
-            const chatContainer = document.getElementById('chat-messages');
-            if (!chatContainer) return;
-            
-            // Cari elemen mesej AI (ia menggunakan class text-blue-50)
-            const aiMessages = chatContainer.querySelectorAll('.text-blue-50');
-            if (aiMessages.length === 0) {
-                window.showAlert('Bro, belum ada mesej dari AI untuk dibaca.', 'warning');
-                return;
-            }
-            
-            const lastAIMsgText = aiMessages[aiMessages.length - 1].textContent.trim();
-            const btnStatus = document.getElementById('tts-status');
-            const originalText = btnStatus.textContent;
-            btnStatus.textContent = "Menjana Audio...";
-
-            try {
-                const apiKey = "AIzaSyAJGgkTTOsGpRHaGEWx3_g8tX70s5a3nPw"; 
-                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
-                
-                const payload = {
-                    contents: [{ parts: [{ text: lastAIMsgText }] }],
-                    generationConfig: {
-                        responseModalities: ["AUDIO"],
-                        speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Zephyr" } } }
-                    },
-                    model: "gemini-2.5-flash-preview-tts"
-                };
-
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) throw new Error('Gagal menjana audio');
-                
-                const result = await response.json();
-                const inlineData = result.candidates?.[0]?.content?.parts?.[0]?.inlineData;
-                
-                if (inlineData && inlineData.data) {
-                    const pcmData = base64ToUint8Array(inlineData.data);
-                    let sampleRate = 24000;
-                    if (inlineData.mimeType) {
-                        const match = inlineData.mimeType.match(/rate=(\d+)/);
-                        if (match) sampleRate = parseInt(match[1], 10);
-                    }
-                    
-                    const wavBlob = createWavBlob(pcmData, sampleRate);
-                    const audioUrl = URL.createObjectURL(wavBlob);
-                    const audio = new Audio(audioUrl);
-                    
-                    btnStatus.textContent = "Sedang Bercakap...";
-                    audio.onended = () => { btnStatus.textContent = originalText; };
-                    await audio.play();
-                } else {
-                    throw new Error('Tiada data audio');
-                }
-            } catch (err) {
-                console.error(err);
-                window.showAlert('Gagal memproses audio TTS.', 'error');
-                btnStatus.textContent = originalText;
-            }
+            // Model TTS 2.5 Preview tidak disokong di pelayan awam (GitHub Pages)
+            window.showAlert('Fungsi Suara A.I (TTS) adalah ciri terhad dan hanya beroperasi di dalam pelayan Sandbox SRTEAM.', 'warning');
         };
 
         window.sendChat = async function(e) {
@@ -1857,8 +1797,8 @@
                     const userQuery = message.replace(/@ai/gi, '').trim() || "Sila berikan status sistem semasa.";
                     const apiKey = "AIzaSyAJGgkTTOsGpRHaGEWx3_g8tX70s5a3nPw"; 
                     
-                    // UBAH: Menggunakan model awam yang stabil (gemini-1.5-flash)
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+                    // UBAH: Menggunakan alias 'latest' untuk memastikan sokongan Kunci API Awam
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
                     const payload = {
                         contents: [{ parts: [{ text: userQuery }] }],
@@ -1882,10 +1822,10 @@
                                 aiResponseText = result.candidates?.[0]?.content?.parts?.[0]?.text || "Mesej kosong dari pelayan pusat.";
                                 break; // Berjaya
                             } else {
-                                // UBAH: Tangkap ralat sebenar dari Google
+                                // Tangkap ralat sebenar dari Google
                                 const errorData = await response.json();
                                 console.error("Ralat Gemini API:", errorData);
-                                aiResponseText = `⚠️ Ralat Sistem: ${errorData.error?.message || 'Permintaan ditolak pelayan'}.`;
+                                aiResponseText = `⚠️ Ralat Sistem AI: ${errorData.error?.message || 'Permintaan ditolak pelayan'}.`;
                                 break; // Berhenti mencuba jika ralat berpunca dari Kunci/Model
                             }
                         } catch (apiErr) {
