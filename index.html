@@ -1094,6 +1094,10 @@
                 }
             } catch (error) {
                 console.error("Auth Error:", error);
+                // Paparkan ralat sebenar dari Firebase ke skrin pengguna
+                if (error.message !== 'Duplicate' && error.message !== 'No Firebase') {
+                    window.showAlert('Gagal: ' + (error.code || error.message), 'error');
+                }
             } finally {
                 // Kembalikan butang ke keadaan asal walau apa pun yang terjadi
                 btnSubmit.innerHTML = originalBtnText;
