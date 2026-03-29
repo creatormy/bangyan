@@ -1505,41 +1505,45 @@
                 const avatarImgList = user.photoURL ? `<img src="${user.photoURL}" class="w-6 h-6 rounded-full object-cover inline-block mr-2 border border-tactical-green/50 shrink-0 cursor-pointer hover:opacity-80 transition" onclick="navigateTo('profile', '${user.email}')" title="Lihat Profil">` : `<div onclick="navigateTo('profile', '${user.email}')" class="w-6 h-6 rounded-full bg-tactical-panel border border-tactical-border text-[8px] flex items-center justify-center mr-2 shrink-0 cursor-pointer hover:bg-tactical-green hover:text-black transition" title="Lihat Profil"><i class="fa-solid fa-user"></i></div>`;
                 const verifiedIconList = getVerifiedBadge(user);
 
-                let actionButtons = '';
+                // PENAMBAHBAIKAN: Kotak pembungkus butang diletakkan supaya butang berlipat ke bawah dengan kemas
+                let actionButtons = '<div class="flex flex-wrap justify-end gap-1.5">';
+                
                 if (user.status === 'pending') {
-                    actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-800 hover:bg-green-600 px-3 py-1 rounded text-xs text-white ml-1">LULUS</button>`;
-                    actionButtons += `<button onclick="deleteUser('${user.id}')" class="bg-red-800 hover:bg-red-600 px-3 py-1 rounded text-xs text-white ml-1">TOLAK</button>`;
+                    actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-800 hover:bg-green-600 px-3 py-1 rounded text-xs text-white">LULUS</button>`;
+                    actionButtons += `<button onclick="deleteUser('${user.id}')" class="bg-red-800 hover:bg-red-600 px-3 py-1 rounded text-xs text-white">TOLAK</button>`;
                 } else {
                     if (isSuperAdmin || currentUser.role === 'komander') {
                         if (user.role === 'user') {
                             const verifyBtnText = user.verified ? '<i class="fa-solid fa-xmark"></i> BUANG TICK' : '<i class="fa-solid fa-check"></i> BERI TICK';
                             const verifyBtnColor = user.verified ? 'bg-gray-700 hover:bg-gray-600' : 'bg-blue-600 hover:bg-blue-500';
-                            actionButtons += `<button onclick="toggleVerifyStatus('${user.id}', ${!!user.verified})" class="${verifyBtnColor} px-2 py-1 rounded text-[10px] text-white ml-1 mt-1 mb-1 font-bold">${verifyBtnText}</button>`;
+                            actionButtons += `<button onclick="toggleVerifyStatus('${user.id}', ${!!user.verified})" class="${verifyBtnColor} px-2 py-1 rounded text-[10px] text-white font-bold">${verifyBtnText}</button>`;
                         }
                     }
 
                     if (isSuperAdmin) {
                         if (user.role === 'user') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded text-[10px] text-white ml-1 mt-1 mb-1 font-bold">JADI ADMIN</button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 px-2 py-1 rounded text-[10px] text-white ml-1 mt-1 mb-1 font-bold">JADI KOMANDER</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded text-[10px] text-white font-bold">JADI ADMIN</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 px-2 py-1 rounded text-[10px] text-white font-bold">JADI KOMANDER</button>`;
                         } else if (user.role === 'admin') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 px-2 py-1 rounded text-[10px] text-white ml-1 mt-1 mb-1 font-bold">JADI KOMANDER</button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[10px] text-white ml-1 mt-1 mb-1 font-bold">BUANG PANGKAT</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 px-2 py-1 rounded text-[10px] text-white font-bold">JADI KOMANDER</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[10px] text-white font-bold">BUANG PANGKAT</button>`;
                         } else if (user.role === 'komander') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded text-[10px] text-white ml-1 mt-1 mb-1 font-bold">JADI ADMIN</button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[10px] text-white ml-1 mt-1 mb-1 font-bold">BUANG PANGKAT</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 px-2 py-1 rounded text-[10px] text-white font-bold">JADI ADMIN</button>`;
+                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-[10px] text-white font-bold">BUANG PANGKAT</button>`;
                         }
                         
                         if (user.status !== 'banned') {
-                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'banned')" class="bg-red-900 hover:bg-red-600 px-2 py-1 rounded text-[10px] text-white ml-1 font-bold">BAN</button>`;
+                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'banned')" class="bg-red-900 hover:bg-red-600 px-2 py-1 rounded text-[10px] text-white font-bold">BAN</button>`;
                         } else {
-                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-700 hover:bg-green-500 px-2 py-1 rounded text-[10px] text-white ml-1 font-bold">UNBAN</button>`;
+                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-700 hover:bg-green-500 px-2 py-1 rounded text-[10px] text-white font-bold">UNBAN</button>`;
                         }
-                        actionButtons += `<button onclick="openEditAdminModal('${user.id}')" class="bg-yellow-800 hover:bg-yellow-600 px-2 py-1 rounded text-[10px] text-white ml-1 font-bold"><i class="fa-solid fa-pen"></i></button>`;
+                        actionButtons += `<button onclick="openEditAdminModal('${user.id}')" class="bg-yellow-800 hover:bg-yellow-600 px-2 py-1 rounded text-[10px] text-white font-bold"><i class="fa-solid fa-pen"></i></button>`;
                     } else if (user.role !== 'superadmin' && user.role !== 'komander') {
                         actionButtons += `<span class="text-xs text-tactical-text"><i class="fa-solid fa-check text-green-500"></i> SAH</span>`;
                     }
                 }
+                
+                actionButtons += '</div>';
 
                 userHtml += `
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
@@ -1554,7 +1558,7 @@
                         <td class="p-3 text-tactical-green">${user.phone || '-'}</td>
                         <td class="p-3">${roleBadge}</td>
                         <td class="p-3 font-bold ${statusColor}">${user.status.toUpperCase()}</td>
-                        <td class="p-3 text-right max-w-[200px]">${actionButtons}</td>
+                        <td class="p-3 text-right max-w-[250px] min-w-[150px]">${actionButtons}</td>
                     </tr>
                 `;
             });
