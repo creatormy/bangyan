@@ -1613,8 +1613,8 @@
                 const verifiedIcon = getVerifiedBadge(tourUser);
                 const roleBadge = window.getSmallRoleBadge(tourUser);
 
-                // DIBAIKI: Tambah w-max ml-auto untuk paksa butang tersusun cantik
-                let tourActions = '<div class="flex flex-wrap justify-end gap-1.5 w-max ml-auto">';
+                // DIBAIKI: Rata Kiri (justify-start) supaya rapat dengan nama
+                let tourActions = '<div class="flex flex-wrap justify-start gap-1.5 w-max">';
                 if (tour.status === 'pending') {
                     tourActions += `<button onclick="updateTourStatus('${tour.id}', 'approved')" class="bg-green-800 hover:bg-green-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Luluskan"><i class="fa-solid fa-check"></i></button>`;
                     tourActions += `<button onclick="updateTourStatus('${tour.id}', 'rejected')" class="bg-red-800 hover:bg-red-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Tolak"><i class="fa-solid fa-xmark"></i></button>`;
@@ -1626,12 +1626,12 @@
                 tourHtml += `
                     <tr class="border-b border-tactical-border/50 hover:bg-tactical-panel/50">
                         <td class="p-3 text-white whitespace-nowrap align-middle">${timeDate}</td>
-                        <td class="p-3 text-tactical-green font-bold align-middle">
+                        <td class="p-3 text-tactical-green font-bold align-middle pr-6 whitespace-nowrap">
                             <div class="flex items-center gap-1">${dynamicName} ${verifiedIcon} ${roleBadge}</div>
                         </td>
-                        <td class="p-3 text-white whitespace-nowrap align-middle">${tourUser ? (tourUser.phone || tour.whatsapp) : tour.whatsapp}</td>
-                        <td class="p-3 font-bold ${sColor} whitespace-nowrap align-middle">${tour.status.toUpperCase()}</td>
-                        <td class="p-3 text-right align-middle">${tourActions}</td>
+                        <td class="p-3 text-white whitespace-nowrap align-middle pr-6">${tourUser ? (tourUser.phone || tour.whatsapp) : tour.whatsapp}</td>
+                        <td class="p-3 font-bold ${sColor} whitespace-nowrap align-middle pr-6">${tour.status.toUpperCase()}</td>
+                        <td class="p-3 text-left align-middle w-full">${tourActions}</td>
                     </tr>
                 `;
             });
