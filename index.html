@@ -1662,7 +1662,7 @@
                 
                 if (isMe) {
                     html += `
-                        <div class="flex justify-end mb-2">
+                        <div class="w-full flex justify-end mb-2">
                             <div class="bg-tactical-greenDark text-white px-4 py-2 rounded-2xl rounded-tr-sm max-w-[85%] relative shadow-md border border-tactical-green/30">
                                 <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans">${displayMessage}</div>
                                 <div class="text-[9px] text-green-200/70 text-right mt-1 font-mono tracking-tighter">${displayTime} <i class="fa-solid fa-check-double text-[8px] ml-1"></i></div>
@@ -1670,7 +1670,7 @@
                         </div>`;
                 } else if (isAI) {
                     html += `
-                        <div class="flex justify-start mb-2">
+                        <div class="w-full flex justify-start mb-2">
                             <div class="bg-blue-900/40 text-blue-50 px-4 py-2 rounded-2xl rounded-tl-sm max-w-[85%] relative shadow-md border border-blue-800/50 backdrop-blur-sm">
                                 <p class="text-[10px] font-bold text-blue-400 mb-1 tracking-wider"><i class="fa-solid fa-robot"></i> ${chat.sender}</p>
                                 <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans">${displayMessage}</div>
@@ -1679,7 +1679,7 @@
                         </div>`;
                 } else {
                     html += `
-                        <div class="flex justify-start mb-2">
+                        <div class="w-full flex justify-start mb-2">
                             <div class="bg-tactical-panel text-gray-200 px-4 py-2 rounded-2xl rounded-tl-sm max-w-[85%] relative shadow-md border border-tactical-border/50">
                                 <p class="text-[10px] font-bold text-tactical-green mb-1 tracking-wider">${chat.sender}</p>
                                 <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans">${displayMessage}</div>
@@ -1692,15 +1692,20 @@
             // Mesej sistem / Info enkripsi jika tiada chat
             if (html === '') {
                 html = `
-                    <div class="flex justify-center my-4">
+                    <div class="w-full flex justify-center my-4">
                         <span class="bg-tactical-panel/80 text-tactical-text text-[10px] px-3 py-1 rounded-full border border-tactical-border font-mono">
-                            <i class="fa-solid fa-lock text-yellow-500 mr-1"></i> Mesej dan panggilan disulitkan secara hujung-ke-hujung.
+                            <i class="fa-solid fa-lock text-yellow-500 mr-1"></i> Mesej disulitkan secara hujung-ke-hujung.
                         </span>
                     </div>`;
             }
 
             chatContainer.innerHTML = html;
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            // Fix Auto-scroll: Beri sedikit masa (100ms) untuk sistem selesai memuatkan blok HTML baru
+            // barulah ia akan skrol ke bawah dengan sempurna.
+            setTimeout(() => {
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }, 100);
         }
 
         window.sendChat = async function(e) {
