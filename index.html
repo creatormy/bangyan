@@ -1560,7 +1560,6 @@
             const banner = document.getElementById('global-announcement-banner');
             const text = document.getElementById('global-announcement-text');
             
-            // Paparkan Spanduk di Atas (Untuk Semua Orang)
             if (banner && text) {
                 if (globalAnnouncementData.isActive && globalAnnouncementData.message.trim() !== '') {
                     text.textContent = globalAnnouncementData.message;
@@ -1570,7 +1569,6 @@
                 }
             }
 
-            // Paparkan Kawalan Edit (Hanya Untuk Superadmin)
             const adminControl = document.getElementById('superadmin-announcement-control');
             if (adminControl) {
                 if (currentUser && currentUser.role === 'superadmin') {
