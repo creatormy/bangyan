@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRTEAM ESPORT | Official Web</title>
+    <title>SRTEAM ESPORT | Delta Force Tactical</title>
     <!-- Tailwind CSS untuk Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome untuk Ikon -->
@@ -1560,15 +1560,15 @@
 
         // --- FUNGSI SIARAN GLOBAL (WHAT'S NEW) ---
         window.renderGlobalAnnouncement = function() {
-            const banner = document.getElementById('global-announcement-banner');
-            const text = document.getElementById('global-announcement-text');
+            const globalNotifContainer = document.getElementById('global-notif-container');
+            const globalNotifText = document.getElementById('global-notif-text');
             
-            if (banner && text) {
+            if (globalNotifContainer && globalNotifText) {
                 if (globalAnnouncementData.isActive && globalAnnouncementData.message.trim() !== '') {
-                    text.textContent = globalAnnouncementData.message;
-                    banner.classList.remove('hidden');
+                    globalNotifText.textContent = globalAnnouncementData.message;
+                    globalNotifContainer.classList.remove('hidden');
                 } else {
-                    banner.classList.add('hidden');
+                    globalNotifContainer.classList.add('hidden');
                 }
             }
 
