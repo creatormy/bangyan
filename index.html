@@ -1563,7 +1563,7 @@
             // Paparkan Spanduk di Atas (Untuk Semua Orang)
             if (banner && text) {
                 if (globalAnnouncementData.isActive && globalAnnouncementData.message.trim() !== '') {
-                    text.textContent = `INFO PEMBAHARUAN: ${globalAnnouncementData.message}`;
+                    text.textContent = globalAnnouncementData.message;
                     banner.classList.remove('hidden');
                 } else {
                     banner.classList.add('hidden');
