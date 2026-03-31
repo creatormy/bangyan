@@ -2275,7 +2275,12 @@
                 notifBadge.classList.add('hidden');
                 if(notifBellIcon) {
                     notifBellIcon.classList.remove('animate-pulse');
-                    notifBellIcon.classList.remove('text-tactical-green');
+                    // Kekalkan warna hijau jika ada info pembaharuan aktif
+                    if (globalAnnouncementData && globalAnnouncementData.isActive && globalAnnouncementData.message.trim() !== '') {
+                        notifBellIcon.classList.add('text-tactical-green');
+                    } else {
+                        notifBellIcon.classList.remove('text-tactical-green');
+                    }
                 }
             }
 
