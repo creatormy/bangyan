@@ -1162,7 +1162,7 @@
 
             if (updateHash) {
                 let hashStr = viewId;
-                if (targetEmail && viewId === 'profile') {
+                if (targetEmail && (viewId === 'profile' || viewId === 'status')) {
                     hashStr += '?id=' + encodeURIComponent(targetEmail);
                 }
                 if (window.location.hash !== '#' + hashStr) {
