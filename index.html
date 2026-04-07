@@ -2536,6 +2536,203 @@
             }
         });
 
+        // --- FUNGSI STATUS FEED (HOME AUTH) ---
+        window.updateHomeView = function() {
+            const unauthDiv = document.getElementById('home-unauth');
+            const authDiv = document.getElementById('home-auth');
+            
+            if (currentUser && currentUser.status === 'approved') {
+                if(unauthDiv) unauthDiv.classList.add('hidden');
+                if(authDiv) authDiv.classList.remove('hidden');
+                
+                const avatar = document.getElementById('status-user-avatar');
+                if (avatar) {
+                    if (currentUser.photoURL) {
+                        avatar.style.backgroundImage = `url(${currentUser.photoURL})`;
+                        avatar.innerHTML = '';
+                    } else {
+                        avatar.style.backgroundImage = 'none';
+                        avatar.innerHTML = '<i class="fa-solid fa-user text-tactical-green text-xl"></i>';
+                    }
+                }
+                window.renderStatusFeed();
+            } else {
+                if(unauthDiv) unauthDiv.classList.remove('hidden');
+                if(authDiv) authDiv.classList.add('hidden');
+            }
+        }
+
+        window.previewStatusImage = function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('status-image-preview').src = e.target.result;
+                    document.getElementById('status-image-preview-container').classList.remove('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        window.removeStatusImagePreview = function() {
+            document.getElementById('status-input-image').value = '';
+            document.getElementById('status-image-preview-container').classList.add('hidden');
+            document.getElementById('status-image-preview').src = '';
+        }
+
+        window.postStatus = async function(e) {
+            e.preventDefault();
+            if (!currentUser || currentUser.status !== 'approved') return;
+
+            const text = document.getElementById('status-input-text').value.trim();
+            const imageInput = document.getElementById('status-input-image');
+            const btn = document.getElementById('btn-post-status');
+            const origText = btn.innerHTML;
+
+            if (!text && (!imageInput.files || imageInput.files.length === 0)) {
+                window.showAlert('Status tidak boleh dibiarkan kosong!', 'warning');
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> MEMPROSES...';
+            btn.disabled = true;
+
+            try {
+                let photoURL = null;
+                if (imageInput.files && imageInput.files[0]) {
+                    if(imageInput.files[0].size > 3145728) {
+                        window.showAlert('Gambar terlalu besar (Maks 3MB).', 'warning');
+                        btn.innerHTML = origText;
+                        btn.disabled = false;
+                        return;
+                    }
+                    photoURL = await compressImage(imageInput.files[0]);
+                }
+
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses'), {
+                    userId: currentUser.id,
+                    author: currentUser.nickname || currentUser.email.split('@')[0],
+                    text: text,
+                    image: photoURL,
+                    likes: [],
+                    timestamp: serverTimestamp()
+                });
+
+                document.getElementById('status-input-text').value = '';
+                window.removeStatusImagePreview();
+                window.showAlert('Status anda berjaya dipancarkan!', 'success');
+            } catch (err) {
+                console.error(err);
+                window.showAlert('Gagal menghantar status.', 'error');
+            } finally {
+                btn.innerHTML = origText;
+                btn.disabled = false;
+            }
+        }
+
+        window.renderStatusFeed = function() {
+            const container = document.getElementById('status-feed-container');
+            if (!container) return;
+
+            if (statusFeed.length === 0) {
+                container.innerHTML = '<div class="panel-tactical p-8 rounded text-center border border-dashed border-tactical-border/50 text-tactical-text font-mono text-sm">Radar kosong. Belum ada sebarang status komunikasi di kawasan ini.</div>';
+                return;
+            }
+
+            let html = '';
+            statusFeed.forEach(status => {
+                const authorUser = users.find(u => u.id === status.userId) || { email: status.author + '@unknown' };
+                const authorName = authorUser.nickname || (authorUser.email ? authorUser.email.split('@')[0] : status.author);
+                
+                let timeValue = Date.now();
+                if (status.timestamp) {
+                    timeValue = typeof status.timestamp.toMillis === 'function' ? status.timestamp.toMillis() : status.timestamp;
+                }
+                const dateObj = new Date(timeValue);
+                const timeStr = dateObj.toLocaleString('ms-MY', { dateStyle: 'medium', timeStyle: 'short' });
+
+                const avatarImg = authorUser.photoURL 
+                    ? `<img src="${authorUser.photoURL}" class="w-10 h-10 rounded-full object-cover border border-tactical-border/50 cursor-pointer shrink-0" onclick="navigateTo('profile', '${authorUser.email}')">`
+                    : `<div onclick="navigateTo('profile', '${authorUser.email}')" class="w-10 h-10 rounded-full bg-tactical-dark border border-tactical-border/50 text-tactical-green flex items-center justify-center cursor-pointer shrink-0"><i class="fa-solid fa-user"></i></div>`;
+
+                const verifiedBadge = window.getVerifiedBadge(authorUser);
+                const officialBadge = window.getOfficialBadge(authorUser);
+                const roleBadge = window.getSmallRoleBadge(authorUser);
+
+                let imageHtml = '';
+                if (status.image) {
+                    imageHtml = `<div class="mt-3 overflow-hidden rounded border border-tactical-border bg-tactical-dark flex justify-center"><img src="${status.image}" class="max-h-96 w-auto object-contain cursor-pointer hover:scale-[1.02] transition duration-300" onclick="openImageViewer('${status.image}', 'Status_${status.author}')"></div>`;
+                }
+
+                const isAuthor = currentUser && currentUser.id === status.userId;
+                const isAdmin = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander');
+                let deleteBtn = '';
+                if (isAuthor || isAdmin) {
+                    deleteBtn = `<button onclick="deleteStatus('${status.id}')" class="text-tactical-text hover:text-red-500 transition text-xs opacity-50 hover:opacity-100 p-2"><i class="fa-solid fa-trash"></i></button>`;
+                }
+
+                let textHtml = status.text ? status.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>') : '';
+
+                const isLiked = status.likes && currentUser && status.likes.includes(currentUser.id);
+                const likeIcon = isLiked ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+                const likeColor = isLiked ? 'text-red-500 hover:text-red-400' : 'text-tactical-text hover:text-white';
+
+                html += `
+                    <div class="panel-tactical p-4 md:p-5 rounded shadow-[0_2px_10px_rgba(0,0,0,0.4)]">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="flex items-center gap-3">
+                                ${avatarImg}
+                                <div>
+                                    <div class="flex items-center gap-1 flex-wrap">
+                                        <a onclick="navigateTo('profile', '${authorUser.email}')" class="font-bold text-white hover:text-tactical-green hover:underline transition cursor-pointer text-sm md:text-base">${authorName}</a>
+                                        ${verifiedBadge} ${officialBadge} ${roleBadge}
+                                    </div>
+                                    <div class="text-[10px] text-tactical-text font-mono mt-0.5"><i class="fa-regular fa-clock"></i> ${timeStr}</div>
+                                </div>
+                            </div>
+                            ${deleteBtn}
+                        </div>
+                        <div class="text-gray-200 text-sm leading-relaxed whitespace-pre-wrap font-sans mt-2 break-words pl-0 md:pl-13">${textHtml}</div>
+                        ${imageHtml}
+                        
+                        <div class="mt-3 pt-3 border-t border-tactical-border/50 flex gap-4 pl-0 md:pl-13">
+                            <button onclick="toggleLikeStatus('${status.id}')" class="${likeColor} transition text-xs md:text-sm font-bold flex items-center gap-1.5 active:scale-95">
+                                ${likeIcon} <span class="font-mono">${status.likes ? status.likes.length : 0} Suka</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        window.deleteStatus = async function(id) {
+            if (confirm('Padam rekod komunikasi ini?')) {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses', id));
+                    window.showAlert('Status berjaya dipadam.', 'success');
+                } catch(e) { window.showAlert('Gagal memadam status', 'error'); }
+            }
+        }
+
+        window.toggleLikeStatus = async function(id) {
+            if (!currentUser || currentUser.status !== 'approved') return;
+            const status = statusFeed.find(s => s.id === id);
+            if (!status) return;
+
+            let likes = status.likes || [];
+            if (likes.includes(currentUser.id)) {
+                likes = likes.filter(uid => uid !== currentUser.id); 
+            } else {
+                likes.push(currentUser.id); 
+            }
+
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses', id), { likes: likes });
+            } catch(e) {}
+        }
+
         window.onload = init;
     </script>
 </body>
