@@ -254,11 +254,19 @@
                 <!-- Borang Kemaskini Status -->
                 <div class="panel-tactical p-4 md:p-6 rounded mb-6 shadow-[0_4px_15px_rgba(0,0,0,0.5)] border-t-4 border-t-tactical-green">
                     <form onsubmit="postStatus(event)">
-                        <div class="flex items-start gap-3 mb-3">
+                        <div class="flex items-start gap-3 mb-3 relative">
                             <div id="status-user-avatar" class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-tactical-dark border border-tactical-green/50 flex items-center justify-center shrink-0 overflow-hidden bg-cover bg-center">
                                 <i class="fa-solid fa-user text-tactical-green text-xl"></i>
                             </div>
-                            <textarea id="status-input-text" class="input-tactical w-full p-3 rounded text-sm md:text-base min-h-[80px] md:min-h-[100px] resize-none" placeholder="Apa yang anda fikirkan hari ini, Komandan?"></textarea>
+                            
+                            <div class="w-full relative">
+                                <textarea id="status-input-text" oninput="handleMentionInput(event)" class="input-tactical w-full p-3 rounded text-sm md:text-base min-h-[80px] md:min-h-[100px] resize-none" placeholder="Apa yang anda fikirkan hari ini? Taip @ untuk tag member."></textarea>
+                                
+                                <!-- Popup Mention (Auto Filter) -->
+                                <div id="mention-popup" class="hidden absolute top-full left-0 w-full bg-[#0e1210] border border-tactical-green rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.8)] z-50 max-h-48 overflow-y-auto mt-1 custom-scrollbar">
+                                    <!-- Diisi oleh JavaScript renderMentionList() -->
+                                </div>
+                            </div>
                         </div>
                         
                         <!-- Pratonton Gambar -->
@@ -857,6 +865,9 @@
         let currentStatusId = null;
         let currentProfileUserId = null; 
         
+        // VARIABEL KHAS UNTUK FUNGSI MENTION
+        let mentionStartIndex = -1;
+
         // HAD PAPARAN STATUS FEED
         let statusDisplayLimit = 10;
         let profileStatusDisplayLimit = 10;
@@ -1273,6 +1284,123 @@
                 activeBtn.classList.add('text-tactical-green', 'border-tactical-green', 'bg-tactical-dark');
             }
         }
+
+        // --- SISTEM AUTO MENTION (TAGGING) PENGGUNA ---
+        window.handleMentionInput = function(e) {
+            const input = e.target;
+            const text = input.value;
+            const cursorPosition = input.selectionStart;
+
+            const textBeforeCursor = text.substring(0, cursorPosition);
+            const lastAtIndex = textBeforeCursor.lastIndexOf('@');
+            const popup = document.getElementById('mention-popup');
+
+            // Pastikan "@" sah (di awal ayat atau selepas jarak)
+            if (lastAtIndex !== -1 && (lastAtIndex === 0 || /\s/.test(textBeforeCursor[lastAtIndex - 1]))) {
+                const query = textBeforeCursor.substring(lastAtIndex + 1);
+
+                // Berhenti mencari mention jika ada jarak (space) selepas @
+                if (!/\s/.test(query)) {
+                    mentionStartIndex = lastAtIndex;
+                    window.renderMentionList(query);
+                    return;
+                }
+            }
+
+            popup.classList.add('hidden');
+            mentionStartIndex = -1;
+        };
+
+        window.renderMentionList = function(query) {
+            const popup = document.getElementById('mention-popup');
+            if (!users || users.length === 0) return;
+
+            const lowerQuery = query.toLowerCase();
+            const matchedUsers = users.filter(u => {
+                if (u.status !== 'approved') return false;
+                const name = (u.nickname || u.username || u.email.split('@')[0]).toLowerCase();
+                // Menapis bermula dari huruf awal atau jika ia mengandungi query tersebut
+                return name.includes(lowerQuery);
+            });
+
+            if (matchedUsers.length === 0) {
+                popup.classList.add('hidden');
+                return;
+            }
+
+            let html = '';
+            matchedUsers.forEach(u => {
+                const name = u.nickname || u.username || u.email.split('@')[0];
+                const safeName = name.replace(/'/g, "\\'"); // Format supaya tak error
+                const avatar = u.photoURL 
+                    ? `<img src="${u.photoURL}" class="w-6 h-6 rounded-full object-cover border border-tactical-green/50 shrink-0">` 
+                    : `<div class="w-6 h-6 rounded-full bg-tactical-dark flex items-center justify-center text-[8px] text-tactical-green border border-tactical-green/50 shrink-0"><i class="fa-solid fa-user"></i></div>`;
+                const roleBadge = window.getSmallRoleBadge(u);
+
+                html += `
+                    <div class="px-3 py-2 flex items-center gap-2 hover:bg-tactical-greenDark cursor-pointer border-b border-tactical-border/30 last:border-0 transition" onclick="insertMention('${safeName}')">
+                        ${avatar}
+                        <span class="text-white text-sm font-bold">${name}</span>
+                        ${roleBadge}
+                    </div>
+                `;
+            });
+
+            popup.innerHTML = html;
+            popup.classList.remove('hidden');
+        };
+
+        window.insertMention = function(name) {
+            const input = document.getElementById('status-input-text');
+            const text = input.value;
+            const cursorPosition = input.selectionStart;
+
+            const beforeMention = text.substring(0, mentionStartIndex);
+            const afterMention = text.substring(cursorPosition);
+
+            // Masukkan nama member bersama jarak (space)
+            input.value = beforeMention + '@' + name + ' ' + afterMention;
+            
+            document.getElementById('mention-popup').classList.add('hidden');
+            mentionStartIndex = -1;
+
+            // Alihkan cursor ke hujung text mention
+            const newCursorPos = beforeMention.length + name.length + 2; 
+            input.setSelectionRange(newCursorPos, newCursorPos);
+            input.focus();
+        };
+
+        // Tutup popup mention jika klik di tempat lain
+        document.addEventListener('click', function(e) {
+            const popup = document.getElementById('mention-popup');
+            if (popup && !popup.contains(e.target) && e.target.id !== 'status-input-text') {
+                popup.classList.add('hidden');
+            }
+        });
+
+        // TUKARKAN NAMA KEPADA LINK BIRU/HIJAU BERDASARKAN DATABASE
+        window.formatMentions = function(text) {
+            if (!text) return '';
+            let formatted = text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            
+            // Isih nama paling panjang dulu supaya regex tak tersilap ganti @Abu jika nama sebenar ialah @AbuBakar
+            const sortedUsers = [...users].sort((a, b) => {
+                const nameA = a.nickname || a.username || a.email.split('@')[0];
+                const nameB = b.nickname || b.username || b.email.split('@')[0];
+                return nameB.length - nameA.length;
+            });
+
+            sortedUsers.forEach(u => {
+                const uName = u.nickname || u.username || u.email.split('@')[0];
+                if (uName) {
+                    const safeName = uName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`@${safeName}(?!\\w)`, 'gi'); // Cegah percampuran nama
+                    formatted = formatted.replace(regex, `<span class="text-tactical-green font-bold cursor-pointer hover:underline drop-shadow-md" onclick="navigateTo('profile', '${u.email}')">$&</span>`);
+                }
+            });
+            
+            return formatted.replace(/\n/g, '<br>');
+        };
 
         // FUNGSI AUTO DETECT LOKASI
         window.autoDetectLocation = function() {
@@ -2892,7 +3020,8 @@
                     photoURL = await compressImage(imageInput.files[0], 1080, 1080, 0.85);
                 }
 
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses'), {
+                // SIMPAN STATUS KE DATABASE
+                const newStatusRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses'), {
                     userId: currentUser.id,
                     author: currentUser.nickname || currentUser.email.split('@')[0],
                     text: text,
@@ -2904,6 +3033,18 @@
                 document.getElementById('status-input-text').value = '';
                 window.removeStatusImagePreview();
                 window.showAlert('Status anda berjaya dipancarkan!', 'success');
+
+                // JANA NOTIFIKASI KEPADA PENGGUNA YANG DI-MENTION
+                const senderName = currentUser.nickname || currentUser.email.split('@')[0];
+                for (const u of users) {
+                    if (u.id === currentUser.id) continue;
+                    const targetName = (u.nickname || u.username || u.email.split('@')[0]).toLowerCase();
+                    
+                    if (text.toLowerCase().includes(`@${targetName}`)) {
+                        await window.sendNotification(u.id, `${senderName} telah menge-tag anda di dalam status terbaharu beliau.`, "mention", `status?id=${newStatusRef.id}`);
+                    }
+                }
+
             } catch (err) {
                 console.error(err);
                 window.showAlert('Gagal menghantar status.', 'error');
@@ -2957,7 +3098,8 @@
                     deleteBtn = `<button onclick="deleteStatus('${status.id}')" class="text-tactical-text hover:text-red-500 transition text-xs opacity-50 hover:opacity-100 p-2"><i class="fa-solid fa-trash"></i></button>`;
                 }
 
-                let textHtml = status.text ? status.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>') : '';
+                // GUNA FUNGSI FORMAT MENTION BAHARU
+                let textHtml = window.formatMentions(status.text);
 
                 const isLiked = status.likes && currentUser && status.likes.includes(currentUser.id);
                 const likeIcon = isLiked ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
@@ -3063,7 +3205,8 @@
                     deleteBtn = `<button onclick="deleteStatus('${status.id}')" class="text-tactical-text hover:text-red-500 transition text-xs opacity-50 hover:opacity-100 p-2"><i class="fa-solid fa-trash"></i></button>`;
                 }
 
-                let textHtml = status.text ? status.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>') : '';
+                // GUNA FUNGSI FORMAT MENTION BAHARU
+                let textHtml = window.formatMentions(status.text);
 
                 const isLiked = status.likes && currentUser && status.likes.includes(currentUser.id);
                 const likeIcon = isLiked ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
@@ -3189,7 +3332,8 @@
                 deleteBtn = `<button onclick="deleteStatus('${status.id}'); navigateTo('home');" class="text-tactical-text hover:text-red-500 transition text-xs opacity-50 hover:opacity-100 p-2"><i class="fa-solid fa-trash"></i></button>`;
             }
 
-            let textHtml = status.text ? status.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>') : '';
+            // GUNA FUNGSI FORMAT MENTION BAHARU
+            let textHtml = window.formatMentions(status.text);
 
             const isLiked = status.likes && currentUser && status.likes.includes(currentUser.id);
             const likeIcon = isLiked ? '<i class="fa-solid fa-thumbs-up"></i>' : '<i class="fa-regular fa-thumbs-up"></i>';
