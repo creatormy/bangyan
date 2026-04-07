@@ -1419,9 +1419,14 @@
                     const idText = displayUser.username || displayUser.email;
                     let emailText = `<span class="text-gray-400">EMEL: ${displayUser.email}</span>`;
                     
-                    // Sembunyikan emel jika ia bukan profil kita dan pemilik menetapkan showEmail ke false
-                    if (!isOwnProfile && displayUser.showEmail === false) {
-                        emailText = `<span class="text-gray-600 italic">EMEL: Disembunyikan <i class="fa-solid fa-eye-slash ml-1"></i></span>`;
+                    if (displayUser.showEmail === false) {
+                        if (isOwnProfile) {
+                            // Tunjuk kepada pemilik bahawa emelnya sedang disembunyikan dari orang awam
+                            emailText = `<span class="text-gray-400">EMEL: ${displayUser.email}</span> <span class="text-yellow-500 text-[10px] ml-1 bg-yellow-900/30 px-2 py-0.5 rounded border border-yellow-700/50"><i class="fa-solid fa-eye-slash"></i> DISEMBUNYIKAN DARI AWAM</span>`;
+                        } else {
+                            // Sembunyikan sepenuhnya dari profil awam
+                            emailText = `<span class="text-gray-600 italic">EMEL: Disembunyikan <i class="fa-solid fa-eye-slash ml-1"></i></span>`;
+                        }
                     }
                     
                     profileEmailDisplay.innerHTML = `<span class="text-blue-400">ID: ${idText}</span> <span class="mx-2 opacity-50">|</span> ${emailText}`;
