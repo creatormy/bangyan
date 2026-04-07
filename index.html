@@ -2678,7 +2678,10 @@
                 } catch(e) {}
             }
             if (link) {
-                window.navigateTo(link);
+                // FIX: Tukar navigateTo(link) kepada pertukaran hash dan route handling rasmi
+                window.location.hash = link;
+                window.handleRoute();
+                
                 const panel = document.getElementById('notif-panel');
                 if(panel) panel.classList.add('hidden');
             }
