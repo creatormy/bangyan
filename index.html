@@ -394,6 +394,19 @@
                         <h4 class="text-xs text-tactical-green font-mono mb-1"><i class="fa-solid fa-book-open"></i> BIO (KEPAKARAN TAKTIKAL)</h4>
                         <p class="text-white text-sm whitespace-pre-wrap" id="profile-bio">Tiada bio ditetapkan.</p>
                     </div>
+
+                    <!-- TAMBAHAN: Tarikh Lahir & Lokasi -->
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="bg-tactical-dark p-3 rounded border border-tactical-border">
+                            <span class="text-xs text-tactical-text font-mono block mb-1"><i class="fa-solid fa-cake-candles text-tactical-green mr-1"></i> TARIKH LAHIR</span>
+                            <span class="text-white text-sm font-bold" id="profile-dob">Belum ditetapkan</span>
+                        </div>
+                        <div class="bg-tactical-dark p-3 rounded border border-tactical-border">
+                            <span class="text-xs text-tactical-text font-mono block mb-1"><i class="fa-solid fa-location-dot text-tactical-green mr-1"></i> LOKASI SEMASA</span>
+                            <span class="text-white text-sm font-bold truncate block w-full" id="profile-location">Belum ditetapkan</span>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -434,9 +447,22 @@
 
                         <!-- TAB 2: PROFIL -->
                         <div id="tab-edit-profil" class="profile-tab-content hidden">
+                            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NO. WHATSAPP</label>
+                                    <input class="input-tactical w-full p-3 rounded" id="edit-phone" type="text" placeholder="Contoh: 60123456789">
+                                </div>
+                                <div>
+                                    <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">TARIKH LAHIR</label>
+                                    <input class="input-tactical w-full p-3 rounded" id="edit-dob" type="date">
+                                </div>
+                            </div>
                             <div class="mb-4">
-                                <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NO. WHATSAPP</label>
-                                <input class="input-tactical w-full p-3 rounded" id="edit-phone" type="text" placeholder="Contoh: 60123456789">
+                                <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">LOKASI SEMASA (AUTO-KESAN)</label>
+                                <div class="flex gap-2">
+                                    <input class="input-tactical w-full p-3 rounded flex-grow" id="edit-location" type="text" placeholder="Contoh: Kuala Lumpur, Malaysia">
+                                    <button type="button" onclick="autoDetectLocation()" class="bg-tactical-greenDark text-white px-4 rounded hover:bg-tactical-green hover:text-black transition flex items-center justify-center shadow-md border border-tactical-green" title="Kesan Lokasi Satelit GPS"><i class="fa-solid fa-location-crosshairs"></i></button>
+                                </div>
                             </div>
                             <div class="mb-4">
                                 <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">BIO (PENGENALAN DIRI)</label>
@@ -1208,6 +1234,56 @@
             }
         }
 
+        // FUNGSI AUTO DETECT LOKASI
+        window.autoDetectLocation = function() {
+            if (!navigator.geolocation) {
+                window.showAlert('Pelayar anda tidak menyokong fungsi pengesan lokasi.', 'error');
+                return;
+            }
+
+            const locationInput = document.getElementById('edit-location');
+            const origPlaceholder = locationInput.placeholder;
+            locationInput.value = "Mengesan koordinat satelit...";
+            locationInput.disabled = true;
+
+            navigator.geolocation.getCurrentPosition(async (position) => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                try {
+                    // API Reverse Geocoding Percuma (OSM Nominatim)
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
+                    const data = await response.json();
+                    
+                    if (data && data.address) {
+                        const city = data.address.city || data.address.town || data.address.village || data.address.state || '';
+                        const country = data.address.country || '';
+                        let locationStr = city ? `${city}, ${country}` : country;
+                        
+                        locationInput.value = locationStr;
+                        window.showAlert('Lokasi berjaya dikesan!', 'success');
+                    } else {
+                        locationInput.value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        window.showAlert('Hanya koordinat satelit berjaya dikesan.', 'warning');
+                    }
+                } catch (error) {
+                    console.error(error);
+                    locationInput.value = '';
+                    window.showAlert('Gagal menterjemah koordinat lokasi.', 'error');
+                } finally {
+                    locationInput.disabled = false;
+                }
+            }, (error) => {
+                locationInput.value = '';
+                locationInput.placeholder = origPlaceholder;
+                locationInput.disabled = false;
+                let errorMsg = 'Gagal mengesan lokasi.';
+                if (error.code === 1) errorMsg = 'Akses lokasi ditolak oleh anda.';
+                else if (error.code === 2) errorMsg = 'Maklumat lokasi satelit tidak tersedia.';
+                else if (error.code === 3) errorMsg = 'Masa carian lokasi tamat.';
+                window.showAlert(errorMsg, 'error');
+            }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+        }
+
         window.previewEditPhoto = function(event) {
             const file = event.target.files[0];
             const previewImg = document.getElementById('edit-photo-preview');
@@ -1353,6 +1429,19 @@
                 const profileBio = document.getElementById('profile-bio');
                 if (profileBio) profileBio.textContent = displayUser.bio || 'Tiada bio ditetapkan.';
                 
+                const profileDob = document.getElementById('profile-dob');
+                if (profileDob) {
+                    if (displayUser.dob) {
+                        const d = new Date(displayUser.dob);
+                        profileDob.textContent = d.toLocaleDateString('ms-MY', { day: '2-digit', month: 'long', year: 'numeric' });
+                    } else {
+                        profileDob.textContent = 'Belum ditetapkan';
+                    }
+                }
+                
+                const profileLocation = document.getElementById('profile-location');
+                if (profileLocation) profileLocation.textContent = displayUser.location || 'Belum ditetapkan';
+                
                 const btnEdit = document.getElementById('btn-edit-profile');
                 if (btnEdit) {
                     btnEdit.style.display = isOwnProfile ? 'block' : 'none';
@@ -1398,6 +1487,8 @@
                 document.getElementById('edit-nickname').value = currentUser.nickname || '';
                 document.getElementById('edit-phone').value = currentUser.phone || '';
                 document.getElementById('edit-bio').value = currentUser.bio || '';
+                document.getElementById('edit-dob').value = currentUser.dob || '';
+                document.getElementById('edit-location').value = currentUser.location || '';
                 document.getElementById('edit-password').value = ''; 
                 document.getElementById('edit-photo').value = ''; 
                 
@@ -1472,6 +1563,8 @@
             const newNick = document.getElementById('edit-nickname').value.trim();
             const newPhone = document.getElementById('edit-phone').value.trim();
             const newBio = document.getElementById('edit-bio').value.trim();
+            const newDob = document.getElementById('edit-dob').value;
+            const newLocation = document.getElementById('edit-location').value.trim();
             
             try {
                 // Halang Penipuan ID
@@ -1484,7 +1577,7 @@
                 }
 
                 const userDoc = doc(db, 'artifacts', appId, 'public', 'data', 'srteam_users', currentUser.id);
-                const updates = { email: newEmail, nickname: newNick, phone: newPhone, bio: newBio };
+                const updates = { email: newEmail, nickname: newNick, phone: newPhone, bio: newBio, dob: newDob, location: newLocation };
                 if (newPass) updates.password = newPass; 
                 
                 const photoInput = document.getElementById('edit-photo');
