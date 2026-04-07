@@ -2797,6 +2797,9 @@
                             <button onclick="toggleLikeStatus('${status.id}')" class="${likeColor} transition text-xs md:text-sm font-bold flex items-center gap-1.5 active:scale-95">
                                 ${likeIcon} <span class="font-mono">${status.likes ? status.likes.length : 0} Suka</span>
                             </button>
+                            <button onclick="navigateTo('status', '${status.id}')" class="text-tactical-text hover:text-white transition text-xs md:text-sm font-bold flex items-center gap-1.5 active:scale-95">
+                                <i class="fa-regular fa-comment"></i> <span class="font-mono">Komen</span>
+                            </button>
                         </div>
                     </div>
                 `;
