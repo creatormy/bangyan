@@ -413,49 +413,54 @@
                 </div>
             </div>
 
-            <!-- Borang Kemaskini Profil -->
-            <div id="profile-edit-form" class="panel-tactical p-8 rounded hidden mt-6 border-t-4 border-t-tactical-green shadow-2xl">
-                <h3 class="text-xl font-bold text-white mb-4 border-b border-tactical-border pb-2">KEMASKINI DOSIER PERIBADI</h3>
-                <form onsubmit="saveProfile(event)">
-                    <div class="mb-4 p-4 border border-tactical-border bg-tactical-dark rounded">
-                        <label class="block text-tactical-green text-xs font-bold mb-2 font-mono"><i class="fa-solid fa-camera mr-2"></i> GAMBAR PROFIL (MAX 2MB)</label>
-                        <input class="text-white w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-tactical-greenDark file:text-white hover:file:bg-tactical-green hover:file:text-black" id="edit-photo" type="file" accept="image/*">
-                        <p class="text-[10px] text-tactical-text mt-1 font-mono">Gambar akan dikompres secara automatik untuk menjimatkan pangkalan data.</p>
-                    </div>
+            <!-- Borang Kemaskini Profil (Modal Popup) -->
+            <div id="profile-edit-form" class="hidden fixed inset-0 bg-black/90 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+                <div class="panel-tactical p-6 md:p-8 rounded w-full max-w-2xl border-t-4 border-t-tactical-green shadow-[0_0_30px_rgba(74,222,128,0.2)] max-h-[95vh] overflow-y-auto custom-scrollbar relative">
+                    <!-- Butang Pangkah (X) -->
+                    <button type="button" onclick="toggleEditProfile()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-tactical-dark border border-tactical-border rounded-full text-tactical-text hover:text-white hover:border-red-500 hover:bg-red-900/30 transition z-10 shadow-lg" title="Tutup"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    
+                    <h3 class="text-xl font-bold text-white mb-6 border-b border-tactical-border pb-2 pr-10">KEMASKINI DOSIER PERIBADI</h3>
+                    <form onsubmit="saveProfile(event)">
+                        <div class="mb-4 p-4 border border-tactical-border bg-tactical-dark rounded">
+                            <label class="block text-tactical-green text-xs font-bold mb-2 font-mono"><i class="fa-solid fa-camera mr-2"></i> GAMBAR PROFIL (MAX 2MB)</label>
+                            <input class="text-white w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-bold file:bg-tactical-greenDark file:text-white hover:file:bg-tactical-green hover:file:text-black" id="edit-photo" type="file" accept="image/*">
+                            <p class="text-[10px] text-tactical-text mt-1 font-mono">Gambar akan dikompres secara automatik untuk menjimatkan pangkalan data.</p>
+                        </div>
 
-                    <div class="grid md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">USERNAME / EMEL PENGGUNA</label>
-                            <input class="input-tactical w-full p-3 rounded" id="edit-email" type="text" required>
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">USERNAME / EMEL PENGGUNA</label>
+                                <input class="input-tactical w-full p-3 rounded" id="edit-email" type="text" required>
+                            </div>
+                            <div>
+                                <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">TUKAR KATA LALUAN</label>
+                                <input class="input-tactical w-full p-3 rounded" id="edit-password" type="text" placeholder="(Biar kosong jika tak mahu tukar)">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">TUKAR KATA LALUAN</label>
-                            <input class="input-tactical w-full p-3 rounded" id="edit-password" type="text" placeholder="(Biar kosong jika tak mahu tukar)">
+                        <div class="grid md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NICKNAME (IGN)</label>
+                                <input class="input-tactical w-full p-3 rounded" id="edit-nickname" type="text" placeholder="Cth: SR Killer">
+                            </div>
+                            <div>
+                                <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NO. WHATSAPP</label>
+                                <input class="input-tactical w-full p-3 rounded" id="edit-phone" type="text" placeholder="Contoh: 60123456789">
+                            </div>
                         </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NICKNAME (IGN)</label>
-                            <input class="input-tactical w-full p-3 rounded" id="edit-nickname" type="text" placeholder="Cth: SR Killer">
+                        <div class="mb-4">
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">BIO (PENGENALAN DIRI)</label>
+                            <textarea class="input-tactical w-full p-3 rounded" id="edit-bio" rows="2" placeholder="Ceritakan sikit tentang anda..."></textarea>
                         </div>
-                        <div>
-                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">NO. WHATSAPP</label>
-                            <input class="input-tactical w-full p-3 rounded" id="edit-phone" type="text" placeholder="Contoh: 60123456789">
+                        <div class="mb-6">
+                            <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">STORY (STATUS HARI INI)</label>
+                            <input class="input-tactical w-full p-3 rounded" id="edit-story" type="text" placeholder="Apa status pemikiran anda hari ini?">
                         </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">BIO (PENGENALAN DIRI)</label>
-                        <textarea class="input-tactical w-full p-3 rounded" id="edit-bio" rows="2" placeholder="Ceritakan sikit tentang anda..."></textarea>
-                    </div>
-                    <div class="mb-6">
-                        <label class="block text-tactical-text text-xs font-bold mb-2 font-mono">STORY (STATUS HARI INI)</label>
-                        <input class="input-tactical w-full p-3 rounded" id="edit-story" type="text" placeholder="Apa status pemikiran anda hari ini?">
-                    </div>
-                    <div class="flex gap-2">
-                        <button type="submit" id="btn-save-profile" class="btn-tactical py-3 px-6 rounded flex-grow"><i class="fa-solid fa-floppy-disk mr-2"></i> SIMPAN PERUBAHAN</button>
-                        <button type="button" onclick="toggleEditProfile()" class="bg-tactical-dark text-white border border-tactical-border py-3 px-6 rounded hover:bg-tactical-panel transition">BATAL</button>
-                    </div>
-                </form>
+                        <div class="flex gap-2 pt-2 border-t border-tactical-border/50">
+                            <button type="submit" id="btn-save-profile" class="btn-tactical py-3 px-6 rounded flex-grow"><i class="fa-solid fa-floppy-disk mr-2"></i> SIMPAN PERUBAHAN</button>
+                            <button type="button" onclick="toggleEditProfile()" class="bg-tactical-dark text-white border border-tactical-border py-3 px-6 rounded hover:bg-tactical-panel transition">BATAL</button>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Kontena Senarai Status Profil -->
