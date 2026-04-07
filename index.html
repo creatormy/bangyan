@@ -2831,6 +2831,195 @@
             } catch(e) {}
         }
 
+        // --- FUNGSI PAPARAN STATUS INDIVIDU & KOMEN ---
+        window.renderSingleStatus = function(statusId) {
+            const container = document.getElementById('single-status-container');
+            if (!container) return;
+
+            const status = statusFeed.find(s => s.id === statusId);
+            if (!status) {
+                container.innerHTML = '<div class="panel-tactical p-8 rounded text-center text-tactical-alert font-mono">Status tidak dijumpai atau telah dipadam oleh Command Center.</div>';
+                document.getElementById('comments-list').innerHTML = '';
+                return;
+            }
+
+            const authorUser = users.find(u => u.id === status.userId) || { email: status.author + '@unknown' };
+            const authorName = authorUser.nickname || (authorUser.email ? authorUser.email.split('@')[0] : status.author);
+            
+            let timeValue = Date.now();
+            if (status.timestamp) {
+                timeValue = typeof status.timestamp.toMillis === 'function' ? status.timestamp.toMillis() : status.timestamp;
+            }
+            const dateObj = new Date(timeValue);
+            const timeStr = dateObj.toLocaleString('ms-MY', { dateStyle: 'medium', timeStyle: 'short' });
+
+            const avatarImg = authorUser.photoURL 
+                ? `<img src="${authorUser.photoURL}" class="w-12 h-12 rounded-full object-cover border border-tactical-border/50 cursor-pointer shrink-0" onclick="navigateTo('profile', '${authorUser.email}')">`
+                : `<div onclick="navigateTo('profile', '${authorUser.email}')" class="w-12 h-12 rounded-full bg-tactical-dark border border-tactical-border/50 text-tactical-green flex items-center justify-center cursor-pointer shrink-0"><i class="fa-solid fa-user text-xl"></i></div>`;
+
+            const verifiedBadge = window.getVerifiedBadge(authorUser);
+            const officialBadge = window.getOfficialBadge(authorUser);
+            const roleBadge = window.getSmallRoleBadge(authorUser);
+
+            let imageHtml = '';
+            if (status.image) {
+                imageHtml = `<div class="mt-4 overflow-hidden rounded border border-tactical-border bg-tactical-dark flex justify-center"><img src="${status.image}" class="max-h-[60vh] w-auto object-contain cursor-pointer hover:scale-[1.02] transition duration-300" onclick="openImageViewer('${status.image}', 'Status_${status.author}')"></div>`;
+            }
+
+            const isAuthor = currentUser && currentUser.id === status.userId;
+            const isAdmin = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander');
+            let deleteBtn = '';
+            if (isAuthor || isAdmin) {
+                deleteBtn = `<button onclick="deleteStatus('${status.id}'); navigateTo('home');" class="text-tactical-text hover:text-red-500 transition text-xs opacity-50 hover:opacity-100 p-2 border border-transparent hover:border-red-500 rounded"><i class="fa-solid fa-trash mr-1"></i> PADAM</button>`;
+            }
+
+            let textHtml = status.text ? status.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>') : '';
+
+            const isLiked = status.likes && currentUser && status.likes.includes(currentUser.id);
+            const likeIcon = isLiked ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+            const likeColor = isLiked ? 'text-red-500 hover:text-red-400' : 'text-tactical-text hover:text-white';
+
+            container.innerHTML = `
+                <div class="panel-tactical p-5 md:p-6 rounded shadow-[0_4px_15px_rgba(0,0,0,0.5)]">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-3">
+                            ${avatarImg}
+                            <div>
+                                <div class="flex items-center gap-1 flex-wrap">
+                                    <a onclick="navigateTo('profile', '${authorUser.email}')" class="font-bold text-white hover:text-tactical-green hover:underline transition cursor-pointer text-base md:text-lg">${authorName}</a>
+                                    ${verifiedBadge} ${officialBadge} ${roleBadge}
+                                </div>
+                                <div class="text-[10px] md:text-xs text-tactical-text font-mono mt-0.5"><i class="fa-regular fa-clock"></i> ${timeStr}</div>
+                            </div>
+                        </div>
+                        ${deleteBtn}
+                    </div>
+                    <div class="text-gray-100 text-sm md:text-base leading-relaxed whitespace-pre-wrap font-sans mt-4 break-words pl-0 md:pl-15">${textHtml}</div>
+                    ${imageHtml}
+                    
+                    <div class="mt-4 pt-3 border-t border-tactical-border/50 flex gap-4 pl-0 md:pl-15">
+                        <button onclick="toggleLikeStatus('${status.id}')" class="${likeColor} transition text-xs md:text-sm font-bold flex items-center gap-1.5 active:scale-95">
+                            ${likeIcon} <span class="font-mono">${status.likes ? status.likes.length : 0} Suka</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Fetch Comments
+            if (commentsUnsubscribe) commentsUnsubscribe();
+            const commentsRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses', statusId, 'comments');
+            commentsUnsubscribe = onSnapshot(commentsRef, (snap) => {
+                let comments = [];
+                snap.forEach(doc => comments.push({ id: doc.id, ...doc.data() }));
+                comments.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)); // Lama di atas, baru di bawah
+                window.renderCommentsList(comments);
+            });
+        }
+
+        window.renderCommentsList = function(comments) {
+            const list = document.getElementById('comments-list');
+            if(!list) return;
+            if(comments.length === 0) {
+                list.innerHTML = '<div class="text-center text-tactical-text text-xs font-mono py-6 border border-dashed border-tactical-border/50 rounded">Jadilah yang pertama untuk memberi maklum balas.</div>';
+                return;
+            }
+
+            let html = '';
+            comments.forEach(c => {
+                const authorUser = users.find(u => u.id === c.userId) || { email: c.author + '@unknown' };
+                const authorName = authorUser.nickname || (authorUser.email ? authorUser.email.split('@')[0] : c.author);
+                
+                const timeStr = c.timestamp ? new Date(c.timestamp).toLocaleString('ms-MY', { dateStyle: 'short', timeStyle: 'short' }) : '';
+
+                const avatarImg = authorUser.photoURL 
+                    ? `<img src="${authorUser.photoURL}" class="w-8 h-8 rounded-full object-cover border border-tactical-border/50 cursor-pointer shrink-0" onclick="navigateTo('profile', '${authorUser.email}')">`
+                    : `<div onclick="navigateTo('profile', '${authorUser.email}')" class="w-8 h-8 rounded-full bg-tactical-dark border border-tactical-border/50 text-tactical-green flex items-center justify-center cursor-pointer shrink-0"><i class="fa-solid fa-user text-xs"></i></div>`;
+
+                const verifiedBadge = window.getVerifiedBadge(authorUser);
+                const officialBadge = window.getOfficialBadge(authorUser);
+
+                const isAuthor = currentUser && currentUser.id === c.userId;
+                const isAdmin = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander');
+                let deleteBtn = '';
+                if (isAuthor || isAdmin) {
+                    deleteBtn = `<button onclick="deleteComment('${c.id}')" class="text-tactical-text hover:text-red-500 transition text-[10px] mt-1"><i class="fa-solid fa-trash"></i></button>`;
+                }
+
+                let textHtml = c.text ? c.text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, '<br>') : '';
+
+                html += `
+                    <div class="flex gap-3 items-start group">
+                        ${avatarImg}
+                        <div class="flex-grow min-w-0">
+                            <div class="bg-[#111111] p-3 rounded-2xl rounded-tl-sm border border-tactical-border/30 w-fit max-w-full">
+                                <div class="flex items-center gap-1 flex-wrap mb-1">
+                                    <a onclick="navigateTo('profile', '${authorUser.email}')" class="font-bold text-white hover:text-tactical-green hover:underline transition cursor-pointer text-xs md:text-sm">${authorName}</a>
+                                    ${verifiedBadge} ${officialBadge}
+                                </div>
+                                <div class="text-gray-300 text-xs md:text-sm whitespace-pre-wrap break-words">${textHtml}</div>
+                            </div>
+                            <div class="flex items-center gap-3 ml-2 mt-1">
+                                <span class="text-[9px] text-tactical-text font-mono">${timeStr}</span>
+                                ${deleteBtn}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+            list.scrollTop = list.scrollHeight;
+        }
+
+        window.submitComment = async function(e) {
+            e.preventDefault();
+            if (!currentUser || !currentStatusId) return;
+            
+            const input = document.getElementById('comment-input-text');
+            const text = input.value.trim();
+            if(!text) return;
+
+            const btn = document.getElementById('btn-post-comment');
+            const origHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            btn.disabled = true;
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses', currentStatusId, 'comments'), {
+                    userId: currentUser.id,
+                    author: currentUser.nickname || currentUser.email.split('@')[0],
+                    text: text,
+                    timestamp: Date.now()
+                });
+                
+                input.value = '';
+                
+                // Notify status author
+                const status = statusFeed.find(s => s.id === currentStatusId);
+                if (status && status.userId !== currentUser.id) {
+                    await window.sendNotification(
+                        status.userId, 
+                        `${currentUser.nickname || currentUser.email.split('@')[0]} telah membalas komen pada status anda.`, 
+                        "mention", 
+                        `status?id=${currentStatusId}`
+                    );
+                }
+            } catch(err) {
+                window.showAlert('Gagal menghantar komen.', 'error');
+            } finally {
+                btn.innerHTML = origHTML;
+                btn.disabled = false;
+            }
+        }
+
+        window.deleteComment = async function(commentId) {
+            if(!confirm('Padam komen ini?')) return;
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_statuses', currentStatusId, 'comments', commentId));
+            } catch(e) {
+                window.showAlert('Gagal memadam komen.', 'error');
+            }
+        }
+
         window.onload = init;
     </script>
 </body>
