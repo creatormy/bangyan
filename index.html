@@ -457,6 +457,11 @@
                     </div>
                 </form>
             </div>
+
+            <!-- Kontena Senarai Status Profil -->
+            <div id="profile-status-feed-container" class="mt-8 space-y-5 w-full md:max-w-2xl">
+                <!-- Akan diisi oleh JavaScript renderProfileStatusFeed -->
+            </div>
         </section>
 
         <!-- 4. MAKLUMAT KLAN -->
@@ -815,6 +820,7 @@
         let statusFeed = [];
         let allComments = [];
         let currentStatusId = null;
+        let currentProfileUserId = null; // FIX: Declared globally
         
         const defaultClanInfo = {
             identity: {
@@ -930,8 +936,7 @@
                 if (!isOfficial) {
                     window.showAlert('⚠️ AKSES DITOLAK: Halaman SCRIM & TOUR khusus untuk member bersatus OFFICIAL SR. Sila hubungi Admin.', 'error');
                     window.navigateTo('home', null, false);
-                    if (updateHash) window.history.pushState(null, '', '#home');
-                    else window.location.hash = 'home';
+                    window.location.hash = 'home'; // FIX: Removed undefined updateHash reference
                     return;
                 }
             }
@@ -1044,6 +1049,11 @@
                 if (currentUser && currentUser.status === 'approved') {
                     if (typeof window.renderStatusFeed === 'function') window.renderStatusFeed();
                     if (currentStatusId && typeof window.renderSingleStatus === 'function') window.renderSingleStatus(currentStatusId);
+                    
+                    // Kemas kini feed di halaman profil jika sedang dibuka
+                    if (currentProfileUserId && document.getElementById('view-profile') && !document.getElementById('view-profile').classList.contains('hidden')) {
+                        if (typeof window.renderProfileStatusFeed === 'function') window.renderProfileStatusFeed(currentProfileUserId);
+                    }
                 }
             });
 
@@ -1067,6 +1077,10 @@
                 if (currentUser && currentUser.status === 'approved') {
                     if (document.getElementById('view-home') && !document.getElementById('view-home').classList.contains('hidden')) {
                         if (typeof window.renderStatusFeed === 'function') window.renderStatusFeed();
+                    }
+                    // Kemas kini jumlah komen di profil jika sedang dibuka
+                    if (currentProfileUserId && document.getElementById('view-profile') && !document.getElementById('view-profile').classList.contains('hidden')) {
+                        if (typeof window.renderProfileStatusFeed === 'function') window.renderProfileStatusFeed(currentProfileUserId);
                     }
                 }
             }, (error) => {
