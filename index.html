@@ -242,7 +242,7 @@
                     <div class="panel-tactical p-6 rounded flex flex-col justify-center items-center text-center">
                         <img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" alt="Crest SRTEAM" class="h-24 w-auto mb-4 drop-shadow-[0_0_15px_rgba(74,222,128,0.4)]">
                         <h3 class="text-xl font-bold text-white mb-2">Akses Terhad</h3>
-                        <p class="text-tactical-text mb-6">Pendaftaran diperlukan untuk mengakses Profil, Basecamp Chat, dan Pendaftaran Tournament.</p>
+                        <p class="text-tactical-text mb-6">Pendaftaran diperlukan untuk mengakses Profil, Update Status, dan Pendaftaran Tournament.</p>
                         <button onclick="navigateTo('login')" class="btn-tactical py-3 px-8 rounded w-full md:w-auto" id="btn-home-action">LOG MASUK / DAFTAR</button>
                     </div>
                 </div>
@@ -554,40 +554,6 @@
             </div>
         </section>
 
-        <!-- 5. BASECAMP CHAT -->
-        <section id="view-chat" class="view-section hidden h-[75vh] flex flex-col">
-            <h2 class="text-3xl font-bold text-white mb-4 border-b border-tactical-border pb-2 uppercase tracking-wider"><i class="fa-solid fa-walkie-talkie text-tactical-green mr-2"></i> BASECAMP CHAT</h2>
-            
-            <div class="panel-tactical rounded-xl flex-grow flex flex-col overflow-hidden border border-tactical-border shadow-lg relative bg-[#0b100c] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]">
-                <div class="bg-tactical-dark/95 backdrop-blur p-3 flex justify-between items-center border-b border-tactical-border z-10">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-tactical-greenDark flex items-center justify-center text-tactical-green border border-tactical-green">
-                            <i class="fa-solid fa-users text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-white font-bold text-sm tracking-wide">PANGKALAN UTAMA</h3>
-                            <p class="text-[10px] text-green-500 font-mono"><i class="fa-solid fa-lock"></i> Disulitkan (End-to-End)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="flex-grow p-4 overflow-y-auto flex flex-col space-y-3 z-10 scroll-smooth" id="chat-messages">
-                    <!-- Akan diisi oleh JavaScript -->
-                </div>
-
-                <div class="p-3 bg-tactical-dark/95 backdrop-blur border-t border-tactical-border z-10">
-                    <form onsubmit="sendChat(event)" class="flex gap-2 items-center">
-                        <div class="relative flex-grow">
-                            <input type="text" id="chat-input" class="w-full bg-[#1a231c] text-white border border-tactical-border/50 focus:border-tactical-green focus:ring-1 focus:ring-tactical-green rounded-full py-3 px-5 text-sm outline-none transition placeholder-gray-500" placeholder="Taip mesej di sini..." autocomplete="off">
-                        </div>
-                        <button type="submit" class="w-12 h-12 rounded-full bg-gradient-to-tr from-tactical-greenDark to-green-600 hover:from-tactical-green hover:to-green-500 text-white flex items-center justify-center transition shadow-lg shrink-0 border border-tactical-green/50">
-                            <i class="fa-solid fa-paper-plane ml-[-2px]"></i>
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
         <!-- 6. PENDAFTARAN TOURNAMENT / SCRIM -->
         <section id="view-tournament" class="view-section hidden">
             <h2 class="text-3xl font-bold text-white mb-6 border-b border-tactical-border pb-2 uppercase"><i class="fa-solid fa-trophy text-tactical-green mr-2"></i> SCRIM & TOUR</h2>
@@ -822,7 +788,6 @@
         let users = [];
         let tournaments = [];
         let announcements = []; 
-        let chatsData = []; 
         let notifications = []; 
         let notifUnsubscribe = null; 
         let globalAnnouncementData = { isActive: false, message: '' };
@@ -830,7 +795,7 @@
         let statusFeed = [];
         let allComments = [];
         let currentStatusId = null;
-        let currentProfileUserId = null; // FIX: Declared globally
+        let currentProfileUserId = null; 
         
         const defaultClanInfo = {
             identity: {
@@ -946,7 +911,7 @@
                 if (!isOfficial) {
                     window.showAlert('⚠️ AKSES DITOLAK: Halaman SCRIM & TOUR khusus untuk member bersatus OFFICIAL SR. Sila hubungi Admin.', 'error');
                     window.navigateTo('home', null, false);
-                    window.location.hash = 'home'; // FIX: Removed undefined updateHash reference
+                    window.location.hash = 'home';
                     return;
                 }
             }
@@ -959,7 +924,6 @@
         const navLinks = [
             { id: 'profile', label: 'PROFIL', icon: 'fa-user-astronaut', reqAuth: true },
             { id: 'clan', label: 'KLAN INFO', icon: 'fa-network-wired', reqAuth: true },
-            { id: 'chat', label: 'BASECAMP', icon: 'fa-walkie-talkie', reqAuth: true },
             { id: 'tournament', label: 'SCRIM & TOUR', icon: 'fa-trophy', reqAuth: true }
         ];
 
@@ -1036,9 +1000,6 @@
                 }
                 window.renderApprovedTournaments();
                 if(typeof window.renderGlobalAnnouncement === 'function') window.renderGlobalAnnouncement();
-                if (typeof renderChats === 'function' && chatsData.length > 0) {
-                    renderChats(chatsData);
-                }
                 if (typeof window.updateHomeView === 'function') window.updateHomeView();
                 window.handleRoute(); 
 
@@ -1095,18 +1056,6 @@
                 }
             }, (error) => {
                 console.error("Gagal mendapatkan senarai komen:", error);
-            });
-
-            const chatRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats');
-            onSnapshot(chatRef, (snapshot) => {
-                chatsData = []; 
-                snapshot.forEach(doc => chatsData.push({ id: doc.id, ...doc.data() }));
-                chatsData.sort((a, b) => {
-                    const timeA = a.timestamp ? (typeof a.timestamp.toMillis === 'function' ? a.timestamp.toMillis() : a.timestamp) : Date.now();
-                    const timeB = b.timestamp ? (typeof b.timestamp.toMillis === 'function' ? b.timestamp.toMillis() : b.timestamp) : Date.now();
-                    return timeA - timeB;
-                });
-                renderChats(chatsData);
             });
 
             const tourRef = collection(db, 'artifacts', appId, 'public', 'data', 'srteam_tournaments');
@@ -2507,167 +2456,6 @@
                 window.showAlert('Gagal menghantar permohonan.', 'error'); 
             }
         }
-
-        // --- FUNGSI BASECAMP CHAT ---
-        window.formatChatMessage = function(text, isAI) {
-            if (!text) return '';
-            
-            let formatted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            formatted = formatted.replace(/```([\s\S]*?)```/g, '<pre class="bg-black/60 p-2 rounded-lg my-2 overflow-x-auto text-xs text-green-400 font-mono border border-white/10"><code>$1</code></pre>');
-            formatted = formatted.replace(/^###\s+(.*)$/gm, `<strong class="text-base block mt-2 mb-1 text-white">$1</strong>`);
-            formatted = formatted.replace(/^##\s+(.*)$/gm, `<strong class="text-lg block mt-2 mb-1 text-white">$1</strong>`);
-            formatted = formatted.replace(/^#\s+(.*)$/gm, `<strong class="text-xl block mt-2 mb-1 text-white">$1</strong>`);
-            formatted = formatted.replace(/^[\*-]\s+(.*)$/gm, '<span class="mr-2 opacity-70">•</span> $1');
-            formatted = formatted.replace(/\*\*([^\*]+)\*\*/g, `<strong class="font-bold text-white">$1</strong>`);
-            formatted = formatted.replace(/\*([^\*]+)\*/g, '<em class="italic opacity-90">$1</em>');
-            formatted = formatted.replace(/`([^`]+)`/g, '<code class="bg-black/40 px-1.5 py-0.5 rounded font-mono text-xs text-yellow-200 border border-white/10">$1</code>');
-            
-            return formatted;
-        }
-
-        function renderChats(chats) {
-            const chatContainer = document.getElementById('chat-messages');
-            if (!chatContainer) return;
-            let html = '';
-            
-            const today = new Date().toLocaleDateString('ms-MY');
-            const isAuthorizedToDelete = currentUser && (currentUser.role === 'superadmin' || currentUser.role === 'admin' || currentUser.role === 'komander' || currentUser.role === 'moderator');
-
-            chats.forEach(chat => {
-                let timeValue = Date.now();
-                if (chat.timestamp) {
-                    timeValue = typeof chat.timestamp.toMillis === 'function' ? chat.timestamp.toMillis() : chat.timestamp;
-                }
-                const dateObj = new Date(timeValue);
-                const chatDate = dateObj.toLocaleDateString('ms-MY');
-                const timeStr = dateObj.toLocaleTimeString('ms-MY', { hour12: false, hour: '2-digit', minute: '2-digit' });
-                const displayTime = chatDate === today ? timeStr : `${chatDate} ${timeStr}`;
-
-                let chatUser = null;
-                if (chat.senderId) {
-                    chatUser = users.find(u => u.id === chat.senderId);
-                } else if (chat.senderEmail) {
-                    chatUser = users.find(u => u.email === chat.senderEmail);
-                } else {
-                    chatUser = users.find(u => (u.nickname || u.email.split('@')[0]).toUpperCase() === chat.sender);
-                }
-
-                const currentName = chatUser ? (chatUser.nickname || chatUser.email.split('@')[0]).toUpperCase() : chat.sender;
-                
-                const isMe = chatUser && currentUser ? (chatUser.id === currentUser.id) : 
-                            ((chat.senderEmail && currentUser && chat.senderEmail === currentUser.email) || 
-                            (chat.sender === (currentUser?.nickname || currentUser?.email.split('@')[0])?.toUpperCase()));
-                
-                const avatarImg = (chatUser && chatUser.photoURL) 
-                    ? `<img src="${chatUser.photoURL}" class="w-5 h-5 rounded-full object-cover inline-block border border-tactical-border/50 shrink-0 cursor-pointer hover:opacity-80 transition" onclick="navigateTo('profile', '${chatUser.email}')" title="Lihat Profil">` 
-                    : `<div onclick="${chatUser ? `MapsTo('profile', '${chatUser.email}')` : ''}" class="w-5 h-5 rounded-full bg-tactical-dark inline-flex items-center justify-center border border-tactical-border/50 text-[8px] text-tactical-green shrink-0 ${chatUser ? 'cursor-pointer hover:bg-tactical-green hover:text-black transition' : ''}" title="Lihat Profil"><i class="fa-solid fa-user"></i></div>`;
-                
-                const verifiedIcon = window.getVerifiedBadge(chatUser);
-                const officialIcon = window.getOfficialBadge(chatUser);
-                const roleBadge = window.getSmallRoleBadge(chatUser);
-                const clickableNameTag = chatUser ? `<a onclick="navigateTo('profile', '${chatUser.email}')" class="cursor-pointer hover:underline">${currentName}</a>` : currentName;
-                const deleteBtnHtml = isAuthorizedToDelete ? `<i class="fa-solid fa-trash text-red-500/70 hover:text-red-500 cursor-pointer ml-2 hover:scale-110 transition" onclick="deleteChat('${chat.id}')" title="Padam Chat Ini"></i>` : '';
-
-                const displayMessage = window.formatChatMessage(chat.message, false);
-                
-                if (isMe) {
-                    html += `
-                        <div class="self-end max-w-[85%] flex flex-col items-end mb-2">
-                            <div class="flex items-center justify-end gap-1.5 mb-1 px-1">
-                                <span class="text-[10px] font-bold text-tactical-green tracking-wider">${clickableNameTag}</span>
-                                ${verifiedIcon} ${officialIcon} ${roleBadge}
-                                <div class="ml-1">${avatarImg}</div>
-                            </div>
-                            <div class="bg-tactical-greenDark text-white px-4 py-2 rounded-2xl rounded-tr-sm shadow-md border border-tactical-green/30 text-left">
-                                <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans break-words">${displayMessage}</div>
-                                <div class="text-[9px] text-green-200/70 text-right mt-1 font-mono tracking-tighter">${displayTime} <i class="fa-solid fa-check-double text-[8px] ml-1"></i> ${deleteBtnHtml}</div>
-                            </div>
-                        </div>`;
-                } else if (chat.sender === "A.I SYSTEM") {
-                    html += `
-                        <div class="self-start max-w-[85%] flex flex-col items-start mb-2">
-                            <div class="flex items-center justify-start gap-1.5 mb-1 px-1">
-                                <div class="w-5 h-5 rounded-full bg-blue-900 inline-flex items-center justify-center border border-blue-500 text-[10px] text-blue-300 shrink-0"><i class="fa-solid fa-robot"></i></div>
-                                <span class="text-[10px] font-bold text-blue-400 tracking-wider">${chat.sender}</span>
-                                <i class="fa-solid fa-circle-check text-blue-500 drop-shadow-md"></i>
-                            </div>
-                            <div class="bg-blue-900/40 text-blue-50 px-4 py-2 rounded-2xl rounded-tl-sm shadow-md border border-blue-800/50 backdrop-blur-sm text-left">
-                                <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans break-words">${displayMessage}</div>
-                                <div class="text-[9px] text-blue-300/70 text-right mt-1 font-mono tracking-tighter">${displayTime} ${deleteBtnHtml}</div>
-                            </div>
-                        </div>`;
-                } else {
-                    html += `
-                        <div class="self-start max-w-[85%] flex flex-col items-start mb-2">
-                            <div class="flex items-center justify-start gap-1.5 mb-1 px-1">
-                                <div class="mr-1">${avatarImg}</div>
-                                <span class="text-[10px] font-bold text-tactical-text tracking-wider">${clickableNameTag}</span>
-                                ${verifiedIcon} ${officialIcon} ${roleBadge}
-                            </div>
-                            <div class="bg-tactical-panel text-gray-200 px-4 py-2 rounded-2xl rounded-tl-sm shadow-md border border-tactical-border/50 text-left">
-                                <div class="text-[13.5px] whitespace-pre-wrap leading-relaxed font-sans break-words">${displayMessage}</div>
-                                <div class="text-[9px] text-gray-500 text-right mt-1 font-mono tracking-tighter">${displayTime} ${deleteBtnHtml}</div>
-                            </div>
-                        </div>`;
-                }
-            });
-            
-            if (html === '') {
-                html = `
-                    <div class="self-center my-4">
-                        <span class="bg-tactical-panel/80 text-tactical-text text-[10px] px-3 py-1 rounded-full border border-tactical-border font-mono">
-                            <i class="fa-solid fa-lock text-yellow-500 mr-1"></i> Mesej disulitkan secara hujung-ke-hujung.
-                        </span>
-                    </div>`;
-            }
-
-            chatContainer.innerHTML = html;
-            
-            const forceScroll = () => { chatContainer.scrollTop = chatContainer.scrollHeight; };
-            forceScroll();
-            setTimeout(forceScroll, 100);
-            setTimeout(forceScroll, 500);
-        }
-
-        window.sendChat = async function(e) {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const message = input.value.trim();
-            if (!message || !currentUser || !firebaseUser) return;
-
-            const senderName = (currentUser.nickname || currentUser.email.split('@')[0]).toUpperCase();
-
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'srteam_chats'), {
-                    sender: senderName, 
-                    senderEmail: currentUser.email, 
-                    senderId: currentUser.id, 
-                    message: message,
-                    timestamp: serverTimestamp()
-                });
-                input.value = '';
-                
-                for (const u of users) {
-                    if (u.id === currentUser.id) continue;
-                    const uNick = (u.nickname || u.email.split('@')[0]).toUpperCase();
-                    if (message.toUpperCase().includes(`@${uNick}`)) {
-                        await window.sendNotification(u.id, `${senderName} telah mention anda di Basecamp Chat.`, "mention", "chat");
-                    }
-                }
-                
-            } catch (err) { window.showAlert("Mesej gagal dihantar.", "error"); }
-        }
-
-        window.deleteChat = async function(id) {
-            if(confirm('Adakah anda pasti mahu memadam mesej ini dari sistem?')) {
-                try {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'srteam_chats', id));
-                    window.showAlert('Mesej berjaya dipadam.', 'success');
-                } catch (err) {
-                    window.showAlert('Gagal memadam mesej.', 'error');
-                }
-            }
-        };
 
         window.showAlert = function(message, type = 'info') {
             const alertBox = document.getElementById('alert-box');
