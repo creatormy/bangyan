@@ -679,10 +679,6 @@
             <div class="flex flex-col lg:grid lg:grid-cols-4 gap-6 w-full min-w-0">
                 <!-- Statistik Admin -->
                 <div class="lg:col-span-1 space-y-4 w-full min-w-0">
-                    <div class="panel-tactical p-4 rounded border-l-red-500">
-                        <h4 class="text-tactical-text text-xs font-mono mb-1">REKRUT BARU (PENDING)</h4>
-                        <div class="text-3xl font-bold text-yellow-500" id="stat-pending">0</div>
-                    </div>
                     <div class="panel-tactical p-4 rounded border-l-green-500">
                         <h4 class="text-tactical-text text-xs font-mono mb-1">MEMBER AKTIF</h4>
                         <div class="text-3xl font-bold text-green-500" id="stat-active">0</div>
@@ -1795,20 +1791,20 @@
                         phone: regPhone,
                         dob: regDob,
                         password: password, 
-                        status: 'pending', 
+                        status: 'approved', 
                         role: 'user', 
                         createdAt: Date.now()
                     });
                     
-                    await window.sendNotification(newUserRef.id, `Selamat datang di SRTEAM Official Web! Pendaftaran anda dengan ID: ${regUsername} sedang diproses.`, "welcome", "profile");
+                    await window.sendNotification(newUserRef.id, `Selamat datang di SRTEAM Official Web! Pendaftaran anda dengan ID: ${regUsername} telah berjaya.`, "welcome", "profile");
 
                     for (const u of users) {
                         if (u.role === 'admin' || u.role === 'superadmin' || u.role === 'komander') {
-                            await window.sendNotification(u.id, `⚠️ PERMOHONAN MEMBER BARU: Rekrut dengan ID (${regUsername}) telah memohon pendaftaran. Sila sahkan!`, "admin_alert", "admin");
+                            await window.sendNotification(u.id, `ℹ️ MEMBER BARU: Rekrut dengan ID (${regUsername}) telah mendaftar masuk ke pangkalan.`, "admin_alert", "admin");
                         }
                     }
 
-                    window.showAlert(`Pendaftaran berjaya! ID anda ialah: ${regUsername}. Sila tunggu kelulusan Admin.`, 'success');
+                    window.showAlert(`Pendaftaran berjaya! ID anda ialah: ${regUsername}. Anda boleh log masuk sekarang.`, 'success');
                     window.toggleAuthMode(true); 
                     document.getElementById('auth-form').reset();
                 }
@@ -2108,7 +2104,7 @@
 
             const userList = document.getElementById('admin-user-list');
             const tourList = document.getElementById('admin-tour-list');
-            let pendingUserCount = 0; let activeUserCount = 0; let pendingTourCount = 0;
+            let activeUserCount = 0; let pendingTourCount = 0;
             const isSuperAdmin = currentUser && currentUser.role === 'superadmin';
 
             // 1. Kira statistik & asingkan pengguna
@@ -2117,17 +2113,14 @@
                 if (user.id === currentUser.id) return; 
                 if (user.role === 'superadmin' && !isSuperAdmin) return; 
 
-                if (user.status === 'pending') pendingUserCount++;
                 if (user.status === 'approved') activeUserCount++;
                 
                 filteredUsers.push(user);
             });
 
-            // 2. SISTEM ISIHAN KHAS: Letak ahli yang 'pending' paling atas
+            // 2. SISTEM ISIHAN KHAS: Letak ahli terbaru di atas
             filteredUsers.sort((a, b) => {
-                if (a.status === 'pending' && b.status !== 'pending') return -1;
-                if (a.status !== 'pending' && b.status === 'pending') return 1;
-                return (b.createdAt || 0) - (a.createdAt || 0); // Yang terbaru di atas jika status sama
+                return (b.createdAt || 0) - (a.createdAt || 0);
             });
 
             // 3. SISTEM PAGINASI (10 Item Per Halaman)
@@ -2159,62 +2152,55 @@
                 const avatarImgList = user.photoURL ? `<img src="${user.photoURL}" class="w-8 h-8 rounded-full object-cover inline-block border border-tactical-green/50 shrink-0">` : `<div class="w-8 h-8 rounded-full bg-tactical-panel border border-tactical-border text-xs flex items-center justify-center shrink-0 text-tactical-text"><i class="fa-solid fa-user"></i></div>`;
                 const verifiedIconList = window.getVerifiedBadge(user);
                 const officialIconList = window.getOfficialBadge(user);
-                const statusColor = user.status === 'pending' ? 'text-yellow-500' : (user.status === 'banned' ? 'text-red-500' : 'text-green-500');
+                const statusColor = user.status === 'banned' ? 'text-red-500' : 'text-green-500';
 
                 let actionButtons = '<div class="flex flex-wrap justify-start gap-2 pt-2">';
                 actionButtons += `<button onclick="navigateTo('profile', '${user.email}')" class="bg-tactical-dark hover:bg-tactical-panel border border-tactical-border w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Lihat Profil Penuh"><i class="fa-solid fa-id-badge text-tactical-green"></i></button>`;
                 
-                if (user.status === 'pending') {
-                    actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-800 hover:bg-green-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Lulus"><i class="fa-solid fa-check"></i></button>`;
-                    actionButtons += `<button onclick="deleteUser('${user.id}')" class="bg-red-800 hover:bg-red-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Tolak"><i class="fa-solid fa-xmark"></i></button>`;
-                } else {
-                    if (isSuperAdmin || currentUser.role === 'komander') {
-                        if (user.role === 'user') {
-                            const verifyBtnIcon = user.verified ? '<i class="fa-solid fa-circle-xmark"></i>' : '<i class="fa-solid fa-circle-check"></i>';
-                            const verifyBtnColor = user.verified ? 'bg-gray-700 hover:bg-gray-600 text-gray-400' : 'bg-blue-600 hover:bg-blue-500 text-white';
-                            const verifyTitle = user.verified ? 'Buang Blue Tick' : 'Beri Blue Tick';
-                            actionButtons += `<button onclick="toggleVerifyStatus('${user.id}', ${!!user.verified})" class="${verifyBtnColor} w-8 h-8 rounded flex items-center justify-center transition shadow-md" title="${verifyTitle}">${verifyBtnIcon}</button>`;
-                        }
-                    }
-
-                    // TMB: Lencana Official SR Manual untuk User & Moderator
-                    if (isSuperAdmin || currentUser.role === 'komander' || currentUser.role === 'admin') {
-                        if (user.role === 'user' || user.role === 'moderator') {
-                            const offBtnIcon = user.officialSr ? '<img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" class="w-4 h-4 grayscale opacity-50">' : '<img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" class="w-4 h-4">';
-                            const offBtnColor = user.officialSr ? 'bg-gray-700 hover:bg-gray-600 text-gray-400' : 'bg-tactical-greenDark hover:bg-tactical-green text-white';
-                            const offTitle = user.officialSr ? 'Buang OFFICIAL SR' : 'Beri OFFICIAL SR';
-                            actionButtons += `<button onclick="toggleOfficialStatus('${user.id}', ${!!user.officialSr})" class="${offBtnColor} w-8 h-8 rounded flex items-center justify-center transition shadow-md" title="${offTitle}">${offBtnIcon}</button>`;
-                        }
-                    }
-
-                    if (isSuperAdmin) {
-                        if (user.role === 'user') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Admin"><i class="fa-solid fa-user-shield"></i></button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Komander"><i class="fa-solid fa-star"></i></button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'moderator')" class="bg-purple-800 hover:bg-purple-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Moderator"><i class="fa-solid fa-user-gear"></i></button>`;
-                        } else if (user.role === 'admin') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Komander"><i class="fa-solid fa-star"></i></button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
-                        } else if (user.role === 'komander') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Admin"><i class="fa-solid fa-user-shield"></i></button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
-                        } else if (user.role === 'moderator') {
-                            actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Admin"><i class="fa-solid fa-user-shield"></i></button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Komander"><i class="fa-solid fa-star"></i></button>`;
-                            actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
-                        }
-                        
-                        if (user.status !== 'banned') {
-                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'banned')" class="bg-red-900 hover:bg-red-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Ban"><i class="fa-solid fa-ban"></i></button>`;
-                        } else {
-                            actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-700 hover:bg-green-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Unban"><i class="fa-solid fa-unlock"></i></button>`;
-                        }
-                        actionButtons += `<button onclick="openEditAdminModal('${user.id}')" class="bg-yellow-800 hover:bg-yellow-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Kemaskini"><i class="fa-solid fa-pen"></i></button>`;
+                if (isSuperAdmin || currentUser.role === 'komander') {
+                    if (user.role === 'user') {
+                        const verifyBtnIcon = user.verified ? '<i class="fa-solid fa-circle-xmark"></i>' : '<i class="fa-solid fa-circle-check"></i>';
+                        const verifyBtnColor = user.verified ? 'bg-gray-700 hover:bg-gray-600 text-gray-400' : 'bg-blue-600 hover:bg-blue-500 text-white';
+                        const verifyTitle = user.verified ? 'Buang Blue Tick' : 'Beri Blue Tick';
+                        actionButtons += `<button onclick="toggleVerifyStatus('${user.id}', ${!!user.verified})" class="${verifyBtnColor} w-8 h-8 rounded flex items-center justify-center transition shadow-md" title="${verifyTitle}">${verifyBtnIcon}</button>`;
                     }
                 }
-                actionButtons += '</div>';
 
-                const pendingDot = user.status === 'pending' ? '<span class="flex h-2 w-2 relative ml-1 mb-1 mt-0.5" title="Menunggu Kelulusan"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span></span>' : '';
+                // TMB: Lencana Official SR Manual untuk User & Moderator
+                if (isSuperAdmin || currentUser.role === 'komander' || currentUser.role === 'admin') {
+                    if (user.role === 'user' || user.role === 'moderator') {
+                        const offBtnIcon = user.officialSr ? '<img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" class="w-4 h-4 grayscale opacity-50">' : '<img src="https://www.dropbox.com/scl/fi/j8jj1avnr3u6rmeamc5qv/sr-transparant.png?rlkey=djgp0h6yta69ywk8uokpyw1ea&st=67hdsl29&raw=1" class="w-4 h-4">';
+                        const offBtnColor = user.officialSr ? 'bg-gray-700 hover:bg-gray-600 text-gray-400' : 'bg-tactical-greenDark hover:bg-tactical-green text-white';
+                        const offTitle = user.officialSr ? 'Buang OFFICIAL SR' : 'Beri OFFICIAL SR';
+                        actionButtons += `<button onclick="toggleOfficialStatus('${user.id}', ${!!user.officialSr})" class="${offBtnColor} w-8 h-8 rounded flex items-center justify-center transition shadow-md" title="${offTitle}">${offBtnIcon}</button>`;
+                    }
+                }
+
+                if (isSuperAdmin) {
+                    if (user.role === 'user') {
+                        actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Admin"><i class="fa-solid fa-user-shield"></i></button>`;
+                        actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Komander"><i class="fa-solid fa-star"></i></button>`;
+                        actionButtons += `<button onclick="setRole('${user.id}', 'moderator')" class="bg-purple-800 hover:bg-purple-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Moderator"><i class="fa-solid fa-user-gear"></i></button>`;
+                    } else if (user.role === 'admin') {
+                        actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Komander"><i class="fa-solid fa-star"></i></button>`;
+                        actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
+                    } else if (user.role === 'komander') {
+                        actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Admin"><i class="fa-solid fa-user-shield"></i></button>`;
+                        actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
+                    } else if (user.role === 'moderator') {
+                        actionButtons += `<button onclick="setRole('${user.id}', 'admin')" class="bg-blue-800 hover:bg-blue-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Admin"><i class="fa-solid fa-user-shield"></i></button>`;
+                        actionButtons += `<button onclick="setRole('${user.id}', 'komander')" class="bg-yellow-700 hover:bg-yellow-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Jadi Komander"><i class="fa-solid fa-star"></i></button>`;
+                        actionButtons += `<button onclick="setRole('${user.id}', 'user')" class="bg-gray-700 hover:bg-gray-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Buang Pangkat"><i class="fa-solid fa-user-minus"></i></button>`;
+                    }
+                    
+                    if (user.status !== 'banned') {
+                        actionButtons += `<button onclick="updateUserStatus('${user.id}', 'banned')" class="bg-red-900 hover:bg-red-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Ban"><i class="fa-solid fa-ban"></i></button>`;
+                    } else {
+                        actionButtons += `<button onclick="updateUserStatus('${user.id}', 'approved')" class="bg-green-700 hover:bg-green-500 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Unban"><i class="fa-solid fa-unlock"></i></button>`;
+                    }
+                    actionButtons += `<button onclick="openEditAdminModal('${user.id}')" class="bg-yellow-800 hover:bg-yellow-600 w-8 h-8 rounded text-white flex items-center justify-center transition shadow-md" title="Kemaskini"><i class="fa-solid fa-pen"></i></button>`;
+                }
+                actionButtons += '</div>';
 
                 userHtml += `
                     <div class="bg-tactical-dark border border-tactical-border/50 rounded flex flex-col w-full">
@@ -2223,7 +2209,7 @@
                                 ${avatarImgList}
                                 <div class="flex flex-col min-w-0 flex-grow">
                                     <span class="flex items-center gap-1 flex-wrap w-full">
-                                        <span class="font-bold text-[13px] md:text-sm text-white truncate max-w-[85%]">${user.nickname || user.email}</span>${pendingDot}
+                                        <span class="font-bold text-[13px] md:text-sm text-white truncate max-w-[85%]">${user.nickname || user.email}</span>
                                     </span>
                                     <div class="mt-0.5 flex flex-wrap items-center gap-1">
                                         ${verifiedIconList}
@@ -2314,9 +2300,6 @@
             });
             
             if (tourList) tourList.innerHTML = tourHtml === '' ? `<div class="p-4 text-center text-tactical-text text-sm font-mono border border-tactical-border rounded bg-tactical-dark">Tiada pendaftaran misi.</div>` : tourHtml;
-
-            const statPending = document.getElementById('stat-pending');
-            if(statPending) statPending.textContent = pendingUserCount;
             
             const statActive = document.getElementById('stat-active');
             if(statActive) statActive.textContent = activeUserCount;
